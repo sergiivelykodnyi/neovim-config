@@ -439,23 +439,10 @@ do
   vim.cmd.colorscheme 'catppuccin'
 
   -- [[ Follow macOS appearance ]]
-  -- Neovim does not get a signal when macOS switches light/dark while it runs.
-  -- So we check the system setting every few seconds and update 'background'.
-  if vim.fn.has 'mac' == 1 then
-    local function sync_background()
-      vim.system({ 'defaults', 'read', '-g', 'AppleInterfaceStyle' }, { text = true }, function(res)
-        -- The key exists only in dark mode. In light mode the command fails.
-        local want = (res.code == 0 and res.stdout:match 'Dark') and 'dark' or 'light'
-        -- Options can only be read and set on the main loop, so schedule it.
-        vim.schedule(function()
-          if vim.o.background ~= want then vim.o.background = want end
-        end)
-      end)
-    end
-    sync_background()
-    local timer = vim.uv.new_timer()
-    timer:start(3000, 3000, sync_background)
-  end
+  -- No timer is needed. Ghostty follows the macOS appearance and tells Neovim
+  -- when its theme changes (DEC mode 2031). Neovim 0.11+ then updates
+  -- 'background' and reloads the colorscheme. Never set 'background' here,
+  -- or Neovim stops following the terminal.
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
