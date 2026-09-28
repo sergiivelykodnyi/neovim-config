@@ -110,7 +110,7 @@ do
   vim.o.number = true
   -- You can also add relative line numbers, to help with jumping.
   --  Experiment for yourself to see if you like it!
-  -- vim.o.relativenumber = true
+  vim.o.relativenumber = true
 
   -- Enable mouse mode, can be useful for resizing splits for example!
   vim.o.mouse = 'a'
@@ -423,18 +423,38 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'folke/tokyonight.nvim' }
-  ---@diagnostic disable-next-line: missing-fields
-  require('tokyonight').setup {
+  vim.pack.add { gh 'catppuccin/nvim' }
+  require('catppuccin').setup {
+    -- 'auto' follows vim.o.background: light -> latte, dark -> mocha
+    flavour = 'auto',
+    background = { light = 'latte', dark = 'mocha' },
     styles = {
-      comments = { italic = false }, -- Disable italics in comments
+      comments = {}, -- Disable italics in comments
     },
   }
 
   -- Load the colorscheme here.
-  -- Like many other themes, this one has different styles, and you could load
-  -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-night'
+  -- Neovim reads the terminal background at startup, so the right flavour is picked.
+  vim.cmd.colorscheme 'catppuccin'
+
+  -- [[ Follow macOS appearance ]]
+  -- Neovim does not get a signal when macOS switches light/dark while it runs.
+  -- So we check the system setting every few seconds and update 'background'.
+  if vim.fn.has 'mac' == 1 then
+    local function sync_background()
+      vim.system({ 'defaults', 'read', '-g', 'AppleInterfaceStyle' }, { text = true }, function(res)
+        -- The key exists only in dark mode. In light mode the command fails.
+        local want = (res.code == 0 and res.stdout:match 'Dark') and 'dark' or 'light'
+        -- Options can only be read and set on the main loop, so schedule it.
+        vim.schedule(function()
+          if vim.o.background ~= want then vim.o.background = want end
+        end)
+      end)
+    end
+    sync_background()
+    local timer = vim.uv.new_timer()
+    timer:start(3000, 3000, sync_background)
+  end
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
