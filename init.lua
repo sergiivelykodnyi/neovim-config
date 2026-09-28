@@ -431,6 +431,7 @@ do
     styles = {
       comments = {}, -- Disable italics in comments
     },
+    auto_integrations = true,
   }
 
   -- Load the colorscheme here.
