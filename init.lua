@@ -99,7 +99,7 @@ do
   vim.g.maplocalleader = ' '
 
   -- Set to true if you have a Nerd Font installed and selected in the terminal
-  vim.g.have_nerd_font = false
+  vim.g.have_nerd_font = true
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
@@ -548,7 +548,28 @@ do
     --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
     --   },
     -- },
-    -- pickers = {}
+    defaults = {
+      -- Ripgrep skips dotfiles by default. `--hidden` shows them in live_grep.
+      -- Files from .gitignore stay hidden. The .git folder is excluded by hand.
+      vimgrep_arguments = {
+        'rg',
+        '--color=never',
+        '--no-heading',
+        '--with-filename',
+        '--line-number',
+        '--column',
+        '--smart-case',
+        '--hidden',
+        '--glob',
+        '!.git/*',
+      },
+    },
+    pickers = {
+      -- Same idea for find_files: show dotfiles, keep .gitignore rules, skip .git.
+      find_files = {
+        find_command = { 'rg', '--files', '--hidden', '--glob', '!.git/*' },
+      },
+    },
     extensions = {
       ['ui-select'] = { require('telescope.themes').get_dropdown() },
     },
