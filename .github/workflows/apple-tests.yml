@@ -1,0 +1,22 @@
+# Run the apple.nvim colorscheme tests on the stable Neovim release.
+name: apple.nvim tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+      - name: Run tests
+        run: nvim --clean -l apple.nvim/tests/run.lua
