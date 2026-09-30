@@ -418,25 +418,23 @@ do
   }
 
   -- [[ Colorscheme ]]
-  -- You can easily change to a different colorscheme.
-  -- Change the name of the colorscheme plugin below, and then
-  -- change the command under that to load whatever the name of that colorscheme is.
-  --
-  -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'catppuccin/nvim' }
-  require('catppuccin').setup {
-    -- 'auto' follows vim.o.background: light -> latte, dark -> mocha
-    flavour = 'auto',
-    background = { light = 'latte', dark = 'mocha' },
+  -- The "apple" colorscheme is a plugin folder inside this config: apple.nvim/.
+  -- It uses Apple system colors. Add the folder to the runtimepath so
+  -- `:colorscheme apple` and `require('apple')` work. When the theme moves to
+  -- its own repository, replace the next line with `vim.pack.add { gh '<user>/apple.nvim' }`.
+  vim.opt.runtimepath:prepend(vim.fn.stdpath 'config' .. '/apple.nvim')
+  require('apple').setup {
+    -- 'auto' follows 'background': dark terminal -> dark flavor, light -> light.
+    flavor = 'auto',
     styles = {
-      comments = {}, -- Disable italics in comments
+      comments = {}, -- no italics in comments
     },
-    auto_integrations = true,
+    -- Integrations (telescope, blink, gitsigns, mini, ...) are detected automatically.
   }
 
   -- Load the colorscheme here.
-  -- Neovim reads the terminal background at startup, so the right flavour is picked.
-  vim.cmd.colorscheme 'catppuccin'
+  -- Neovim reads the terminal background at startup, so the right flavor is picked.
+  vim.cmd.colorscheme 'apple'
 
   -- [[ Follow macOS appearance ]]
   -- No timer is needed. Ghostty follows the macOS appearance and tells Neovim

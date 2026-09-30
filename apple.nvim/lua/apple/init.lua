@@ -49,6 +49,21 @@ local function do_load()
   end
 end
 
+-- Plugins are often added to the runtimepath after `:colorscheme` ran in
+-- init.lua, so integration detection misses them. When the colorscheme loads
+-- during startup, run it once more at VimEnter, when every plugin is there.
+local function reapply_after_startup()
+  if vim.v.vim_did_enter == 1 then return end
+  vim.api.nvim_create_autocmd('VimEnter', {
+    group = vim.api.nvim_create_augroup('apple-startup', { clear = true }),
+    once = true,
+    desc = 'Re-apply the apple colorscheme so late plugins get their integrations',
+    callback = function()
+      if vim.g.colors_name == 'apple' then vim.cmd.colorscheme 'apple' end
+    end,
+  })
+end
+
 -- Apply the colorscheme for the current options and 'background'.
 function M.load()
   if loading then return end
@@ -56,6 +71,7 @@ function M.load()
   local ok, err = pcall(do_load)
   loading = false
   if not ok then error(err, 0) end
+  reapply_after_startup()
 end
 
 return M
