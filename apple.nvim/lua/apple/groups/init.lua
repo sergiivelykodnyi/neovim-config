@@ -8,7 +8,7 @@ M.core = { 'editor', 'syntax', 'treesitter', 'lsp' }
 
 -- Applied when the plugin is found, or forced with opts.integrations.
 -- Each module exports `detect` (module names for util.has_plugin) and `get`.
-M.integrations = {}
+M.integrations = { 'telescope' }
 
 -- Is this integration on? User option wins, then plugin detection.
 ---@param name string
