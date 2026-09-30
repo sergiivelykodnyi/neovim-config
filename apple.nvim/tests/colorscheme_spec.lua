@@ -115,3 +115,59 @@ t.test('every core group has valid keys and colors', function()
     end
   end
 end)
+
+for _, mode in ipairs { 'dark', 'light' } do
+  local p = palette[mode]
+
+  t.test(mode .. ': treesitter captures follow the Xcode colors', function()
+    config.extend()
+    vim.o.background = mode
+    vim.cmd.colorscheme 'apple'
+    t.eq(p.fg, t.hex(hl('@variable').fg), '@variable')
+    t.eq(p.purple, t.hex(hl('@variable.builtin').fg), '@variable.builtin')
+    t.eq(p.pink, t.hex(hl('@keyword').fg), '@keyword')
+    t.eq(true, hl('@keyword').bold, '@keyword bold')
+    t.eq(p.pink, t.hex(hl('@keyword.return').fg), '@keyword.return')
+    t.eq(p.blue, t.hex(hl('@function').fg), '@function')
+    t.eq(p.blue, t.hex(hl('@function.method').fg), '@function.method')
+    t.eq(p.teal, t.hex(hl('@type').fg), '@type')
+    t.eq(p.red, t.hex(hl('@string').fg), '@string')
+    t.eq(p.purple, t.hex(hl('@string.escape').fg), '@string.escape')
+    t.eq(p.yellow, t.hex(hl('@number').fg), '@number')
+    t.eq(p.orange, t.hex(hl('@keyword.import').fg), '@keyword.import')
+    t.eq(p.comment, t.hex(hl('@comment').fg), '@comment')
+    t.eq(p.fg, t.hex(hl('@punctuation.delimiter').fg), '@punctuation.delimiter')
+  end)
+
+  t.test(mode .. ': markup captures for markdown and help', function()
+    t.eq(true, hl('@markup.strong').bold)
+    t.eq(true, hl('@markup.italic').italic)
+    t.eq(p.blue, t.hex(hl('@markup.heading').fg))
+    t.eq(p.blue, t.hex(hl('@markup.link.url').fg))
+    t.eq(true, hl('@markup.link.url').underline)
+    t.eq(p.green, t.hex(hl('@diff.plus').fg))
+    t.eq(p.red, t.hex(hl('@diff.minus').fg))
+  end)
+
+  t.test(mode .. ': LSP semantic tokens and references', function()
+    t.eq(p.teal, t.hex(hl('@lsp.type.class').fg), '@lsp.type.class')
+    t.eq(p.fg, t.hex(hl('@lsp.type.variable').fg), '@lsp.type.variable')
+    t.eq(p.blue, t.hex(hl('@lsp.type.function').fg), '@lsp.type.function')
+    t.eq(true, hl('@lsp.mod.deprecated').strikethrough, '@lsp.mod.deprecated')
+    t.eq(p.bg_alt, t.hex(hl('LspReferenceText').bg), 'LspReferenceText')
+    t.eq(p.comment, t.hex(hl('LspInlayHint').fg), 'LspInlayHint')
+    t.eq(p.bg_alt, t.hex(hl('LspInlayHint').bg), 'LspInlayHint bg')
+    t.eq(true, hl('LspSignatureActiveParameter').bold)
+  end)
+end
+
+t.test('styles apply to treesitter captures too', function()
+  require('apple').setup { styles = { comments = { italic = true }, keywords = {}, functions = { italic = true }, strings = { bold = true } } }
+  vim.cmd.colorscheme 'apple'
+  t.eq(true, hl('@comment').italic)
+  t.eq(nil, hl('@keyword').bold)
+  t.eq(nil, hl('@keyword.function').bold)
+  t.eq(true, hl('@function').italic)
+  t.eq(true, hl('@string').bold)
+  config.extend()
+end)
