@@ -436,12 +436,6 @@ do
   -- Neovim reads the terminal background at startup, so the right flavor is picked.
   vim.cmd.colorscheme 'apple'
 
-  -- [[ Follow macOS appearance ]]
-  -- No timer is needed. Ghostty follows the macOS appearance and tells Neovim
-  -- when its theme changes (DEC mode 2031). Neovim 0.11+ then updates
-  -- 'background' and reloads the colorscheme. Never set 'background' here,
-  -- or Neovim stops following the terminal.
-
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
   require('todo-comments').setup { signs = false }

@@ -14,3 +14,6 @@ spell/
 
 # superpowers plan workspace (scratch)
 .superpowers/
+
+# Claude Code per-machine settings
+.claude/settings.local.json
