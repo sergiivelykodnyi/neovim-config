@@ -11,3 +11,6 @@ spell/
 # merge conflicts.
 
 .DS_Store
+
+# superpowers plan workspace (scratch)
+.superpowers/
