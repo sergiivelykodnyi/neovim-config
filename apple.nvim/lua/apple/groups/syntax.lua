@@ -2,9 +2,7 @@
 local M = {}
 
 -- Merge a user style into a base definition. The user style wins.
-local function style(base, extra)
-  return vim.tbl_extend('force', base, extra or {})
-end
+local function style(base, extra) return vim.tbl_extend('force', base, extra or {}) end
 
 ---@param p table palette
 ---@param opts table options

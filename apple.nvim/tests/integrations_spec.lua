@@ -3,15 +3,25 @@ local palette = require 'apple.palette'
 local config = require 'apple.config'
 local groups = require 'apple.groups'
 
-local function hl(name)
-  return vim.api.nvim_get_hl(0, { name = name, link = false })
-end
+local function hl(name) return vim.api.nvim_get_hl(0, { name = name, link = false }) end
 
-local valid = { fg = 1, bg = 1, sp = 1, bold = 1, italic = 1, underline = 1, undercurl = 1, strikethrough = 1, reverse = 1, link = 1, blend = 1, nocombine = 1, default = 1 }
+local valid = {
+  fg = 1,
+  bg = 1,
+  sp = 1,
+  bold = 1,
+  italic = 1,
+  underline = 1,
+  undercurl = 1,
+  strikethrough = 1,
+  reverse = 1,
+  link = 1,
+  blend = 1,
+  nocombine = 1,
+  default = 1,
+}
 
-t.test('integration list has the expected names', function()
-  t.ok(vim.tbl_contains(groups.integrations, 'telescope'), 'telescope is listed')
-end)
+t.test('integration list has the expected names', function() t.ok(vim.tbl_contains(groups.integrations, 'telescope'), 'telescope is listed') end)
 
 -- Generic checks for every integration file.
 for _, name in ipairs(groups.integrations) do
@@ -30,19 +40,17 @@ for _, name in ipairs(groups.integrations) do
         t.eq('table', type(def), group)
         for key, value in pairs(def) do
           t.ok(valid[key], group .. ' has unknown key ' .. key)
-          if key == 'fg' or key == 'bg' or key == 'sp' then t.ok(value == 'NONE' or value:match '^#%x%x%x%x%x%x$', group .. '.' .. key .. ' = ' .. tostring(value)) end
+          if key == 'fg' or key == 'bg' or key == 'sp' then
+            t.ok(value == 'NONE' or value:match '^#%x%x%x%x%x%x$', group .. '.' .. key .. ' = ' .. tostring(value))
+          end
         end
       end
     end)
   end
 
-  t.test(name .. ': is off when the plugin is missing (nvim --clean)', function()
-    t.eq(false, groups.enabled(name, config.defaults))
-  end)
+  t.test(name .. ': is off when the plugin is missing (nvim --clean)', function() t.eq(false, groups.enabled(name, config.defaults)) end)
 
-  t.test(name .. ': can be forced on', function()
-    t.eq(true, groups.enabled(name, { integrations = { [name] = true } }))
-  end)
+  t.test(name .. ': can be forced on', function() t.eq(true, groups.enabled(name, { integrations = { [name] = true } })) end)
 end
 
 t.test('forced integration groups are applied by :colorscheme', function()
@@ -167,9 +175,15 @@ t.test('mason: header is a blue block with readable text', function()
   t.eq(palette.light.comment, defs.MasonMuted.fg)
 end)
 
-t.test('the integration list matches the spec', function()
-  t.eq({ 'telescope', 'blink', 'gitsigns', 'which_key', 'todo_comments', 'mini', 'fidget', 'mason', 'indent_blankline', 'neo_tree', 'dap' }, groups.integrations)
-end)
+t.test(
+  'the integration list matches the spec',
+  function()
+    t.eq(
+      { 'telescope', 'blink', 'gitsigns', 'which_key', 'todo_comments', 'mini', 'fidget', 'mason', 'indent_blankline', 'neo_tree', 'dap' },
+      groups.integrations
+    )
+  end
+)
 
 t.test('indent_blankline: guides use the border gray, scope is stronger', function()
   local defs = require('apple.groups.indent_blankline').get(palette.dark, config.defaults)

@@ -11,9 +11,7 @@ t.test('defaults: auto flavor, plain comments, bold keywords', function()
   t.eq(nil, config.defaults.on_highlights)
 end)
 
-t.test('options start equal to defaults', function()
-  t.eq(config.defaults, config.options)
-end)
+t.test('options start equal to defaults', function() t.eq(config.defaults, config.options) end)
 
 t.test('extend merges user options over defaults', function()
   local o = config.extend { flavor = 'light', integrations = { telescope = false } }
@@ -43,8 +41,6 @@ t.test('extend does not change defaults', function()
   t.eq({}, config.defaults.integrations)
 end)
 
-t.test('extend with nil is the same as empty', function()
-  t.eq(config.defaults, config.extend())
-end)
+t.test('extend with nil is the same as empty', function() t.eq(config.defaults, config.extend()) end)
 
 config.extend()

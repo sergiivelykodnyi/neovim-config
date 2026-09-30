@@ -14,9 +14,7 @@ function M.test(name, fn)
 end
 
 function M.eq(expected, actual, msg)
-  if not vim.deep_equal(expected, actual) then
-    error(('%s: expected %s, got %s'):format(msg or 'eq', vim.inspect(expected), vim.inspect(actual)), 2)
-  end
+  if not vim.deep_equal(expected, actual) then error(('%s: expected %s, got %s'):format(msg or 'eq', vim.inspect(expected), vim.inspect(actual)), 2) end
 end
 
 function M.ok(value, msg)
@@ -39,7 +37,9 @@ end
 -- WCAG contrast ratio between two '#RRGGBB' colors (1 to 21).
 function M.contrast(a, b)
   local x, y = luminance(a), luminance(b)
-  if x < y then x, y = y, x end
+  if x < y then
+    x, y = y, x
+  end
   return (x + 0.05) / (y + 0.05)
 end
 
@@ -49,9 +49,7 @@ function M.min_contrast(fg, bg, min, label)
 end
 
 -- Convert a color number from nvim_get_hl() to '#RRGGBB'.
-function M.hex(n)
-  return n and ('#%06X'):format(n) or nil
-end
+function M.hex(n) return n and ('#%06X'):format(n) or nil end
 
 -- Forget loaded Lua modules, so the next require() reads the files again.
 function M.unload(prefix)

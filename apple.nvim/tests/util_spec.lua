@@ -7,9 +7,7 @@ t.test('mix blends two colors', function()
   t.eq('#FF0000', util.mix('#FF0000', '#0000FF', 1))
 end)
 
-t.test('has_plugin is true for a loaded module', function()
-  t.eq(true, util.has_plugin 'apple.util')
-end)
+t.test('has_plugin is true for a loaded module', function() t.eq(true, util.has_plugin 'apple.util') end)
 
 t.test('has_plugin finds a module file on the runtimepath', function()
   -- Forget the module, so only the file lua/apple/util.lua can be found.
@@ -23,9 +21,7 @@ t.test('has_plugin finds a folder of modules on the runtimepath', function()
   t.eq(true, util.has_plugin 'apple')
 end)
 
-t.test('has_plugin is false for an unknown plugin', function()
-  t.eq(false, util.has_plugin 'this-plugin-does-not-exist')
-end)
+t.test('has_plugin is false for an unknown plugin', function() t.eq(false, util.has_plugin 'this-plugin-does-not-exist') end)
 
 t.test('has_plugin accepts a list and returns true when any matches', function()
   t.eq(true, util.has_plugin { 'nope', 'apple.util' })

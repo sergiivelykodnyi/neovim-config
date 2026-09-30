@@ -2,9 +2,7 @@
 -- Most captures follow the Xcode-style colors from syntax.lua.
 local M = {}
 
-local function style(base, extra)
-  return vim.tbl_extend('force', base, extra or {})
-end
+local function style(base, extra) return vim.tbl_extend('force', base, extra or {}) end
 
 ---@param p table palette
 ---@param opts table options

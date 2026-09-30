@@ -3,9 +3,7 @@ local palette = require 'apple.palette'
 local config = require 'apple.config'
 
 -- Final highlight definition of a group (links resolved).
-local function hl(name)
-  return vim.api.nvim_get_hl(0, { name = name, link = false })
-end
+local function hl(name) return vim.api.nvim_get_hl(0, { name = name, link = false }) end
 
 -- Review focus 1: no setup() call, defaults are used.
 t.test('colorscheme apple loads without setup()', function()
@@ -107,11 +105,27 @@ end)
 t.test('every core group has valid keys and colors', function()
   config.extend()
   local groups = require('apple.groups').get(palette.dark, config.options)
-  local valid = { fg = 1, bg = 1, sp = 1, bold = 1, italic = 1, underline = 1, undercurl = 1, strikethrough = 1, reverse = 1, link = 1, blend = 1, nocombine = 1, default = 1 }
+  local valid = {
+    fg = 1,
+    bg = 1,
+    sp = 1,
+    bold = 1,
+    italic = 1,
+    underline = 1,
+    undercurl = 1,
+    strikethrough = 1,
+    reverse = 1,
+    link = 1,
+    blend = 1,
+    nocombine = 1,
+    default = 1,
+  }
   for name, def in pairs(groups) do
     for key, value in pairs(def) do
       t.ok(valid[key], name .. ' has unknown key ' .. key)
-      if key == 'fg' or key == 'bg' or key == 'sp' then t.ok(value == 'NONE' or value:match '^#%x%x%x%x%x%x$', name .. '.' .. key .. ' = ' .. tostring(value)) end
+      if key == 'fg' or key == 'bg' or key == 'sp' then
+        t.ok(value == 'NONE' or value:match '^#%x%x%x%x%x%x$', name .. '.' .. key .. ' = ' .. tostring(value))
+      end
     end
   end
 end)
@@ -177,9 +191,7 @@ t.test('flavor = light forces background and palette', function()
   vim.o.background = 'dark'
   vim.cmd.colorscheme 'apple'
   -- 'background' is corrected on the next event-loop tick.
-  vim.wait(200, function()
-    return vim.o.background == 'light'
-  end)
+  vim.wait(200, function() return vim.o.background == 'light' end)
   t.eq('light', vim.o.background)
   t.eq(palette.light.bg, t.hex(hl('Normal').bg))
   t.eq('apple', vim.g.colors_name)
@@ -193,9 +205,7 @@ t.test('flavor = dark wins when the terminal switches background', function()
   -- Neovim reloads the colorscheme on this change; the theme sets it back
   -- on the next event-loop tick.
   vim.o.background = 'light'
-  vim.wait(200, function()
-    return vim.o.background == 'dark'
-  end)
+  vim.wait(200, function() return vim.o.background == 'dark' end)
   t.eq('dark', vim.o.background)
   t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
   config.extend()
@@ -230,9 +240,7 @@ end)
 -- Review focus 4: an error in on_highlights must not block the next load.
 t.test('a failing on_highlights does not break the next load', function()
   require('apple').setup {
-    on_highlights = function()
-      error 'boom'
-    end,
+    on_highlights = function() error 'boom' end,
   }
   local ok = pcall(vim.cmd.colorscheme, 'apple')
   t.eq(false, ok, 'error is reported')
@@ -240,4 +248,17 @@ t.test('a failing on_highlights does not break the next load', function()
   local ok2, err = pcall(vim.cmd.colorscheme, 'apple')
   t.ok(ok2, tostring(err))
   t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
+end)
+
+t.test('switching from a forced flavor to auto in the same tick does not change background', function()
+  vim.o.background = 'dark'
+  require('apple').setup { flavor = 'light' }
+  vim.cmd.colorscheme 'apple'
+  -- The user changes their mind before the scheduled background fix runs.
+  require('apple').setup {}
+  vim.cmd.colorscheme 'apple'
+  vim.wait(200, function() return false end)
+  t.eq('dark', vim.o.background, 'auto mode must not touch background')
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
+  config.extend()
 end)

@@ -3,9 +3,7 @@ local util = require 'apple.util'
 local palette = require 'apple.palette'
 local hig = require 'hig'
 
-local function is_hex(s)
-  return type(s) == 'string' and s:match '^#%x%x%x%x%x%x$' ~= nil
-end
+local function is_hex(s) return type(s) == 'string' and s:match '^#%x%x%x%x%x%x$' ~= nil end
 
 for _, mode in ipairs { 'dark', 'light' } do
   local p = palette[mode]
