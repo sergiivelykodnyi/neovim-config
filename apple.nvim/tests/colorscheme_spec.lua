@@ -171,3 +171,73 @@ t.test('styles apply to treesitter captures too', function()
   t.eq(true, hl('@string').bold)
   config.extend()
 end)
+
+t.test('flavor = light forces background and palette', function()
+  require('apple').setup { flavor = 'light' }
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  -- 'background' is corrected on the next event-loop tick.
+  vim.wait(200, function()
+    return vim.o.background == 'light'
+  end)
+  t.eq('light', vim.o.background)
+  t.eq(palette.light.bg, t.hex(hl('Normal').bg))
+  t.eq('apple', vim.g.colors_name)
+  config.extend()
+end)
+
+t.test('flavor = dark wins when the terminal switches background', function()
+  require('apple').setup { flavor = 'dark' }
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  -- Neovim reloads the colorscheme on this change; the theme sets it back
+  -- on the next event-loop tick.
+  vim.o.background = 'light'
+  vim.wait(200, function()
+    return vim.o.background == 'dark'
+  end)
+  t.eq('dark', vim.o.background)
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
+  config.extend()
+end)
+
+-- Review focus 3: auto mode follows a background change at runtime.
+t.test('auto flavor follows background changes after load', function()
+  config.extend()
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  vim.o.background = 'light'
+  t.eq('apple', vim.g.colors_name)
+  t.eq(palette.light.bg, t.hex(hl('Normal').bg))
+  vim.o.background = 'dark'
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
+end)
+
+t.test('on_highlights can change and add groups', function()
+  require('apple').setup {
+    on_highlights = function(groups, p)
+      groups.Comment = { fg = p.blue }
+      groups.AppleCustom = { fg = p.green, bold = true }
+    end,
+  }
+  vim.cmd.colorscheme 'apple'
+  t.eq(palette.dark.blue, t.hex(hl('Comment').fg))
+  t.eq(palette.dark.green, t.hex(hl('AppleCustom').fg))
+  t.eq(true, hl('AppleCustom').bold)
+  config.extend()
+end)
+
+-- Review focus 4: an error in on_highlights must not block the next load.
+t.test('a failing on_highlights does not break the next load', function()
+  require('apple').setup {
+    on_highlights = function()
+      error 'boom'
+    end,
+  }
+  local ok = pcall(vim.cmd.colorscheme, 'apple')
+  t.eq(false, ok, 'error is reported')
+  config.extend()
+  local ok2, err = pcall(vim.cmd.colorscheme, 'apple')
+  t.ok(ok2, tostring(err))
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
+end)

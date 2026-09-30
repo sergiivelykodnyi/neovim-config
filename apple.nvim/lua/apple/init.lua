@@ -23,10 +23,6 @@ local function do_load()
   local opts = require('apple.config').options
   local flavor = resolve_flavor(opts)
 
-  -- A forced flavor also sets 'background', so plugins and Neovim agree.
-  -- In 'auto' mode we never touch it, so the theme keeps following the terminal.
-  if vim.o.background ~= flavor then vim.o.background = flavor end
-
   vim.cmd 'highlight clear'
   vim.g.colors_name = 'apple'
 
@@ -37,6 +33,19 @@ local function do_load()
   require('apple.util').apply(groups)
   for i, color in ipairs(palette.terminal) do
     vim.g['terminal_color_' .. (i - 1)] = color
+  end
+
+  -- A forced flavor also sets 'background', so plugins and Neovim agree.
+  -- This must happen after load() returns: when Neovim reloads the
+  -- colorscheme because 'background' changed, it restores the user's value
+  -- if the colorscheme changes it during that reload. The scheduled set
+  -- triggers one more reload, which then finds nothing to change.
+  -- In 'auto' mode we never touch 'background', so the theme keeps
+  -- following the terminal.
+  if vim.o.background ~= flavor then
+    vim.schedule(function()
+      if vim.g.colors_name == 'apple' and vim.o.background ~= flavor then vim.o.background = flavor end
+    end)
   end
 end
 
