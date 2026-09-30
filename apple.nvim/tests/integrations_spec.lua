@@ -114,3 +114,55 @@ t.test('todo_comments: keyword colors follow diagnostics', function()
   t.eq(palette.dark.blue, defs.TodoBgTODO.bg)
   t.eq('todo-comments', require('apple.groups.todo_comments').detect)
 end)
+
+t.test('mini, fidget, mason are listed', function()
+  for _, name in ipairs { 'mini', 'fidget', 'mason' } do
+    t.ok(vim.tbl_contains(groups.integrations, name), name)
+  end
+end)
+
+for _, mode in ipairs { 'dark', 'light' } do
+  local p = palette[mode]
+  t.test('mini (' .. mode .. '): statusline mode blocks use one Apple color and are readable', function()
+    local defs = require('apple.groups.mini').get(p, config.defaults)
+    local expected = {
+      MiniStatuslineModeNormal = p.blue,
+      MiniStatuslineModeInsert = p.green,
+      MiniStatuslineModeVisual = p.purple,
+      MiniStatuslineModeReplace = p.red,
+      MiniStatuslineModeCommand = p.orange,
+      MiniStatuslineModeOther = p.teal,
+    }
+    for group, color in pairs(expected) do
+      t.eq(color, defs[group].bg, group .. ' bg')
+      t.eq(true, defs[group].bold, group .. ' bold')
+      -- The mode name is bold, so 3.0 (WCAG for bold text) is enough.
+      t.min_contrast(defs[group].fg, defs[group].bg, 3.0, group)
+    end
+    t.eq(p.bg_alt, defs.MiniStatuslineFilename.bg)
+    t.eq(p.border, defs.MiniStatuslineDevinfo.bg)
+    t.min_contrast(defs.MiniStatuslineDevinfo.fg, p.border, 4.5, 'Devinfo')
+    t.min_contrast(defs.MiniStatuslineInactive.fg, defs.MiniStatuslineInactive.bg, 3.0, 'Inactive')
+  end)
+end
+
+t.test('mini: icon colors map to the palette', function()
+  local defs = require('apple.groups.mini').get(palette.dark, config.defaults)
+  t.eq(palette.dark.blue, defs.MiniIconsBlue.fg)
+  t.eq(palette.dark.teal, defs.MiniIconsCyan.fg)
+  t.eq(palette.dark.comment, defs.MiniIconsGrey.fg)
+  t.eq('mini', require('apple.groups.mini').detect)
+end)
+
+t.test('fidget: title is blue, tasks are gray', function()
+  local defs = require('apple.groups.fidget').get(palette.dark, config.defaults)
+  t.eq(palette.dark.blue, defs.FidgetTitle.fg)
+  t.eq(palette.dark.comment, defs.FidgetTask.fg)
+end)
+
+t.test('mason: header is a blue block with readable text', function()
+  local defs = require('apple.groups.mason').get(palette.light, config.defaults)
+  t.eq(palette.light.blue, defs.MasonHeader.bg)
+  t.min_contrast(defs.MasonHeader.fg, defs.MasonHeader.bg, 3.0, 'MasonHeader')
+  t.eq(palette.light.comment, defs.MasonMuted.fg)
+end)
