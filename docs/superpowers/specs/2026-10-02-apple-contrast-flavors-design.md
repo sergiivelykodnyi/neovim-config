@@ -1,166 +1,116 @@
-# Apple themes: default and increased contrast flavors
+# Apple themes: two flavors with a contrast rule
 
-Date: 2026-10-02
+Date: 2026-10-02 (revised the same day)
 
 ## Goal
 
-Make the `apple` themes use Apple's **default** system colors, and offer
-Apple's **increased contrast** colors as a second choice. This gives four
-flavors: default dark, default light, increased contrast dark, increased
-contrast light. They exist for Neovim (`apple.nvim`), Ghostty and Warp.
+Keep the `apple` themes at two flavors, dark and light, built from Apple
+system colors, with text that is comfortable to read: enough contrast, but not
+a harsh one. The themes exist for Neovim (`apple.nvim`), Ghostty and Warp.
 
-Today the themes are a mix: text colors are increased contrast values, while
-backgrounds and grays are default values.
+## Decision record
 
-The themes are based on the colors Apple defines. Readability (contrast) is
-**not** a requirement now. If a color looks poor in daily use, we fix it later.
+The first version of this spec asked for four flavors: Apple's default colors
+and Apple's increased contrast colors, each in dark and light. It was built
+and then looked at on a real screen. The result:
+
+- Light with default colors is hard to read. Yellow, orange, green and teal
+  have a contrast of 1.4 to 2.1 against the background.
+- Dark with default colors is readable (4.7 to 12.0), but the colors are very
+  saturated and too strong on a bright 5K monitor.
+- The full increased contrast flavors (with Apple's increased contrast grays
+  as background) were not really "more contrast": the background gets
+  lighter in dark mode, and bright terminal colors equal the normal ones.
+
+So the four flavors and the `contrast` option are dropped. Both flavors use
+the mix the themes had before: Apple's increased contrast colors for text, on
+Apple's default backgrounds and grays. In dark mode these text colors are
+lighter and less saturated; in light mode they are darker.
 
 Source of the values:
 [Apple HIG, Color, Specifications](https://developer.apple.com/design/human-interface-guidelines/color)
-(June 2025 values). `apple.nvim/tests/hig.lua` already holds all of them and
-was checked against the page on 2026-10-01.
+(June 2025 values). `apple.nvim/tests/hig.lua` holds all of them and was
+checked against the page on 2026-10-01.
 
 ## Requirements
 
-- Four flavors, each built only from Apple values.
-- Default flavors are the default: with no new settings, Neovim, Ghostty and
-  Warp show default colors.
-- Neovim: a new `contrast` option picks the column. `flavor` works as before.
-- Ghostty and Warp: one theme file per flavor.
-- Tests check that every flavor uses the right Apple values.
+- Two flavors, `dark` and `light`. No `contrast` option and no extra theme
+  files.
+- Colors are the same as on `main` before this work, in Neovim, Ghostty and
+  Warp.
+- A contrast rule in the tests (WCAG contrast ratio against the background),
+  so a weak color cannot come back:
+  - syntax text colors: at least 4.5 in dark, at least 4.0 in light;
+  - normal text: at least 7.0;
+  - comments: at least 3.0;
+  - text on search and selection backgrounds: at least 4.5.
+- No pure white and no pure black background.
 - The minimal Neovim config in `macos-configs` is removed. The `neovim-config`
   repository replaces it.
 
 ## Out of scope
 
-- Any contrast or readability rule. Existing contrast tests are removed.
-- Following the macOS "Increase contrast" setting automatically.
+- Increased contrast flavors and a `contrast` option.
+- Following the macOS "Increase contrast" setting.
 - Generating the Ghostty and Warp files from a script.
+- A light background that reaches 4.5 for every syntax color. It would need a
+  white background, which is not wanted.
 
 ## Colors
 
-`column` is `default` or `increased contrast`. `mode` is `dark` or `light`.
-A flavor is one column and one mode.
-
-Roles that follow the flavor's column and mode:
+`mode` is `dark` or `light`. "default" and "increased" name the two columns of
+Apple's table.
 
 | Role | Apple color |
 |---|---|
-| `bg` | gray 6 |
-| `bg_alt` | gray 5 |
-| `border` | gray 3 |
-| `line_nr` | gray 2 |
-| `comment` | gray |
-| `red`, `orange`, `yellow`, `green`, `teal`, `blue`, `purple`, `pink` | same name |
-| `cursor` | indigo |
-
-So light comments become `#8E8E93` in the default flavor (today `#6C6C70`).
-
-Roles that are the same in both columns (they follow only the mode):
-
-| Role | Value |
-|---|---|
+| `bg` | gray 6, default |
+| `bg_alt` | gray 5, default |
+| `border` | gray 3, default |
+| `line_nr` | gray 2, default |
+| `comment` | dark: gray, default (`#8E8E93`). Light: gray, increased (`#6C6C70`) |
 | `fg` | `#F2F2F7` dark, `#1C1C1E` light |
+| `red`, `orange`, `yellow`, `green`, `teal`, `blue`, `purple`, `pink` | same name, increased |
+| `cursor` | indigo, default |
 | `selection` / `selection_fg` | `#A7AAFF` / `#1C1C1E` |
-| `search` | default yellow |
-| `cur_search` | default orange |
-| `search_fg` | `#1C1C1E` |
-| `diff_add`, `diff_change`, `diff_delete` | default green, blue, red |
+| `search` / `cur_search` | yellow / orange, default, with `#1C1C1E` text |
+| `diff_add`, `diff_change`, `diff_delete` | green, blue, red, default |
 
-Derived diff backgrounds are mixed from the diff colors and the flavor's `bg`,
-as today.
+Contrast of the syntax text colors against `bg`: 5.8 to 12.8 in dark, 4.1 to
+4.7 in light.
 
 ### Terminal colors (16 ANSI slots)
 
-Slots 1–6 are red, green, yellow, blue, purple, cyan. Slots 9–14 are the
-bright versions.
+Slots 1-6 are red, green, yellow, blue, purple, cyan.
 
-| Flavor | Normal (1–6) | Bright (9–14) |
-|---|---|---|
-| default | default | increased contrast |
-| increased contrast | increased contrast | increased contrast |
-
-Slots 0, 7, 8, 15 keep today's values in all flavors.
+- Normal (1-6): increased contrast.
+- Bright (9-14): default.
+- Slots 0, 7, 8, 15 keep their values.
 
 ## apple.nvim (repository `neovim-config`)
 
-### Option
-
-```lua
-require('apple').setup {
-  flavor = 'auto',       -- 'auto' | 'dark' | 'light' (unchanged)
-  contrast = 'default',  -- 'default' | 'increased' (new)
-}
-```
-
-Any other `contrast` value is treated as `'default'`.
-
-### Palette
-
-`lua/apple/palette.lua` changes from two hand-written tables to:
-
-- one table with Apple's values, four columns per color (the same data as
-  `tests/hig.lua`);
-- one function `build(mode, contrast)` that returns a palette by the role
-  tables above.
-
-The module exposes `dark`, `light`, `dark_contrast`, `light_contrast` and
-`get(mode, contrast)`. All four have the same keys as today, so the group files
-and `on_highlights` need no change.
-
-`lua/apple/init.lua` picks the palette with `get(flavor, opts.contrast)` in
-both `do_load()` and `apply_new_integrations()`.
-
-`tests/hig.lua` stays a separate copy. The tests compare the palette with it,
-so a typo in one place is caught.
-
-### Tests
-
-- `palette_spec.lua` runs for all four flavors: format, role values against
-  `hig.lua`, terminal slots, derived diff backgrounds, same keys everywhere.
-- `config_spec.lua`: `contrast` default and merge.
-- `colorscheme_spec.lua`: loading with `contrast = 'increased'` applies the
-  increased contrast palette; changing the option and reloading switches it.
-- `integrations_spec.lua` runs group checks for all four flavors.
-- All `min_contrast` checks are removed, with the helper if nothing uses it.
-
-### Docs
-
-`apple.nvim/README.md`: four flavors, the `contrast` option, and a note that
-the default light flavor has weak yellow, orange, green and teal text.
+- `palette.lua`, `config.lua`, `init.lua`, the README and the top-level
+  `init.lua` are the same as on `main`. The `contrast` option, `palette.get()`,
+  `palette.dark_contrast` and `palette.light_contrast` are removed.
+- Tests are the same as on `main`, with one change: the check for syntax text
+  colors in `palette_spec.lua` goes from 3.0 to 4.5 (dark) and 4.0 (light).
+- The README gets a short note about the contrast rule.
 
 ## macos-configs
 
-### Ghostty
+### Ghostty and Warp
 
-| File | Flavor |
-|---|---|
-| `themes/apple-dark` | default dark (values change) |
-| `themes/apple-light` | default light (values change) |
-| `themes/apple-dark-contrast` | increased contrast dark (new) |
-| `themes/apple-light-contrast` | increased contrast light (new) |
+`apple-dark`, `apple-light`, `apple_dark.yaml` and `apple_light.yaml` are the
+same as on `main`. The four `-contrast` / `_contrast` files are removed. The
+`theme =` line in the Ghostty `config` does not change.
 
-`background`, `cursor-color` and the palette follow the role tables.
-`cursor-text` stays `#1C1C1E`. The `theme =` line in `config` does not change.
+### Remove the minimal Neovim config (kept from the first version)
 
-### Warp
-
-`apple_dark.yaml` and `apple_light.yaml` change to default values.
-`apple_dark_contrast.yaml` and `apple_light_contrast.yaml` are new. Each has
-the same colors as the Ghostty file of the same flavor. `accent` stays
-`#A7AAFF`.
-
-### Remove the minimal Neovim config
-
-- Delete the `nvim/` stow package.
-- Delete `tests/nvim/colorscheme_spec.lua`, `config_spec.lua`,
-  `palette_spec.lua`.
-- Move the rest to `tests/themes/` (`run.lua`, `helpers.lua`, `hig.lua`,
-  `themes_spec.lua`). The runner no longer adds `nvim/` to the runtimepath.
-  It still runs with `nvim --clean -l tests/themes/run.lua`.
-- README: remove the "NEOVIM CONFIGURATION" section, including the `kvim`
-  part. Keep a short note that the Neovim config lives in `neovim-config`,
-  and the test command for the themes.
+- The `nvim/` stow package and its tests are deleted.
+- The theme tests live in `tests/themes/` and run with
+  `nvim --clean -l tests/themes/run.lua`.
+- The README has an "APPLE THEMES" section with the test command and a note
+  that the Neovim config lives in `neovim-config`. The "NEOVIM CONFIGURATION"
+  section, including the `kvim` part, is gone.
 - The old spec and plan for that config under `docs/superpowers/` stay as
   history.
 
@@ -169,13 +119,16 @@ Files with uncommitted user changes (`ghostty/.config/ghostty/config`,
 
 ### Tests
 
-`themes_spec.lua` runs for all four flavors:
+`themes_spec.lua` runs for both flavors:
 
-- Ghostty normal and bright slots match the terminal table above.
-- Ghostty `background` is gray 6 and `cursor-color` is indigo of the flavor.
-- Warp has the same colors as Ghostty.
+- every Ghostty file has all 16 colors and all base keys;
+- normal slots are increased contrast, bright slots are default;
+- black and white slots, background (gray 6), cursor (indigo), foreground,
+  cursor text and selection have the values above;
+- every Warp file has the same colors as its Ghostty file, the accent color
+  and the right `details` value.
 
 ## Delivery
 
-Two branches and two pull requests, one per repository. They do not depend on
-each other.
+Two branches named `apple-contrast-flavors`, one per repository. They do not
+depend on each other.
