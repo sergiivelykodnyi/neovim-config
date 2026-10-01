@@ -3,7 +3,6 @@ local M = {}
 
 ---@class AppleOptions
 ---@field flavor 'auto'|'dark'|'light' 'auto' follows 'background'
----@field contrast 'default'|'increased' which Apple colors to use
 ---@field styles table<string, vim.api.keyset.highlight> extra style per syntax kind
 ---@field integrations table<string, boolean> force an integration on or off
 ---@field on_highlights? fun(groups: table, palette: table) change groups before they are applied
@@ -11,7 +10,6 @@ local M = {}
 ---@type AppleOptions
 M.defaults = {
   flavor = 'auto',
-  contrast = 'default',
   styles = {
     comments = {},
     keywords = { bold = true },

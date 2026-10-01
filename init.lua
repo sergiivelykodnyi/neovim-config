@@ -426,8 +426,6 @@ do
   require('apple').setup {
     -- 'auto' follows 'background': dark terminal -> dark flavor, light -> light.
     flavor = 'auto',
-    -- 'default' uses Apple's default colors, 'increased' the increased contrast ones.
-    contrast = 'default',
     styles = {
       comments = {}, -- no italics in comments
     },

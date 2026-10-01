@@ -2,8 +2,7 @@
 
 A Neovim colorscheme built from Apple system colors
 ([Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/color)).
-Four flavors: dark and light, each with Apple's default colors or Apple's
-increased contrast colors. Dark or light follows `'background'`, so it switches
+Two flavors, dark and light. The flavor follows `'background'`, so it switches
 with your terminal and macOS appearance.
 
 Syntax colors follow Xcode: pink keywords, red strings, yellow numbers, blue
@@ -44,7 +43,6 @@ vim.cmd.colorscheme 'apple'
 ```lua
 require('apple').setup {
   flavor = 'auto',            -- 'auto' | 'dark' | 'light'
-  contrast = 'default',       -- 'default' | 'increased'
   styles = {
     comments = {},            -- e.g. { italic = true }
     keywords = { bold = true },
@@ -59,10 +57,6 @@ vim.cmd.colorscheme 'apple'
 
 - `flavor = 'auto'` uses `'background'`. Never set `'background'` yourself in
   that mode, or Neovim stops following the terminal.
-- `contrast = 'increased'` uses Apple's increased contrast colors for text,
-  grays and the background. The colors are Apple's values as they are. In the
-  default light flavor, yellow, orange, green and teal text is weak; use
-  `contrast = 'increased'` if that bothers you.
 - A style table **replaces** the default for that key. `keywords = {}` turns
   bold off.
 - `on_highlights` gets the full group table before it is applied:
@@ -99,25 +93,26 @@ Treesitter and the built-in LSP client are always styled.
 
 ## Palette
 
-| name    | dark      | light     | dark, increased | light, increased |
-|---------|-----------|-----------|-----------------|------------------|
-| bg      | `#1C1C1E` | `#F2F2F7` | `#242426`       | `#EBEBF0`        |
-| bg_alt  | `#2C2C2E` | `#E5E5EA` | `#363638`       | `#D8D8DC`        |
-| border  | `#48484A` | `#C7C7CC` | `#545456`       | `#AEAEB2`        |
-| line_nr | `#636366` | `#AEAEB2` | `#7C7C80`       | `#8E8E93`        |
-| comment | `#8E8E93` | `#8E8E93` | `#AEAEB2`       | `#6C6C70`        |
-| fg      | `#F2F2F7` | `#1C1C1E` | `#F2F2F7`       | `#1C1C1E`        |
-| red     | `#FF4245` | `#FF383C` | `#FF6165`       | `#E9152D`        |
-| orange  | `#FF9230` | `#FF8D28` | `#FFA056`       | `#C55300`        |
-| yellow  | `#FFD600` | `#FFCC00` | `#FEDF43`       | `#A16A00`        |
-| green   | `#30D158` | `#34C759` | `#4AD968`       | `#008932`        |
-| teal    | `#00D2E0` | `#00C3D0` | `#3BDDEC`       | `#008198`        |
-| blue    | `#0091FF` | `#0088FF` | `#5CB8FF`       | `#1E6EF4`        |
-| purple  | `#DB34F2` | `#CB30E0` | `#EA8DFF`       | `#B02FC2`        |
-| pink    | `#FF375F` | `#FF2D55` | `#FF8AC4`       | `#E7124D`        |
+| name       | dark      | light     |
+|------------|-----------|-----------|
+| bg         | `#1C1C1E` | `#F2F2F7` |
+| bg_alt     | `#2C2C2E` | `#E5E5EA` |
+| border     | `#48484A` | `#C7C7CC` |
+| line_nr    | `#636366` | `#AEAEB2` |
+| comment    | `#8E8E93` | `#6C6C70` |
+| fg         | `#F2F2F7` | `#1C1C1E` |
+| red        | `#FF6165` | `#E9152D` |
+| orange     | `#FFA056` | `#C55300` |
+| yellow     | `#FEDF43` | `#A16A00` |
+| green      | `#4AD968` | `#008932` |
+| teal       | `#3BDDEC` | `#008198` |
+| blue       | `#5CB8FF` | `#1E6EF4` |
+| purple     | `#EA8DFF` | `#B02FC2` |
+| pink       | `#FF8AC4` | `#E7124D` |
 
-In Lua the palettes are `require('apple.palette').dark`, `.light`,
-`.dark_contrast` and `.light_contrast`.
+Text colors are Apple's increased contrast colors; backgrounds and grays are
+Apple's default ones. The tests keep every syntax color at a contrast of at
+least 4.5 against the background in dark and 4.0 in light.
 
 ## Development
 
