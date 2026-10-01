@@ -1,8 +1,9 @@
 local t = require 'helpers'
 local config = require 'apple.config'
 
-t.test('defaults: auto flavor, plain comments, bold keywords', function()
+t.test('defaults: auto flavor, default contrast, plain comments, bold keywords', function()
   t.eq('auto', config.defaults.flavor)
+  t.eq('default', config.defaults.contrast)
   t.eq({}, config.defaults.styles.comments)
   t.eq({ bold = true }, config.defaults.styles.keywords)
   t.eq({}, config.defaults.styles.functions)
@@ -42,5 +43,12 @@ t.test('extend does not change defaults', function()
 end)
 
 t.test('extend with nil is the same as empty', function() t.eq(config.defaults, config.extend()) end)
+
+t.test('extend sets contrast and resets it on the next call', function()
+  local o = config.extend { contrast = 'increased' }
+  t.eq('increased', o.contrast)
+  t.eq('auto', o.flavor, 'flavor keeps its default')
+  t.eq('default', config.extend({}).contrast)
+end)
 
 config.extend()

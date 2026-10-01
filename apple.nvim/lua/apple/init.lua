@@ -37,7 +37,7 @@ local function do_load()
   vim.cmd 'highlight clear'
   vim.g.colors_name = 'apple'
 
-  local palette = require('apple.palette')[flavor]
+  local palette = require('apple.palette').get(flavor, opts.contrast)
   local groups = require('apple.groups').get(palette, opts)
   if opts.on_highlights then opts.on_highlights(groups, palette) end
   applied_integrations = enabled_integrations(opts)
@@ -76,7 +76,7 @@ function M.apply_new_integrations()
   end
   if #new == 0 then return false end
 
-  local palette = require('apple.palette')[resolve_flavor(opts)]
+  local palette = require('apple.palette').get(resolve_flavor(opts), opts.contrast)
   -- Build the full table, so on_highlights sees the same input as in load().
   local all = require('apple.groups').get(palette, opts)
   if opts.on_highlights then opts.on_highlights(all, palette) end

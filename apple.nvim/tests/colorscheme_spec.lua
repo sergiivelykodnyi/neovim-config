@@ -262,3 +262,87 @@ t.test('switching from a forced flavor to auto in the same tick does not change 
   t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
   config.extend()
 end)
+
+t.test('contrast = increased loads the increased contrast palette', function()
+  require('apple').setup { contrast = 'increased' }
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  local p = palette.dark_contrast
+  t.eq(p.bg, t.hex(hl('Normal').bg), 'Normal bg')
+  t.eq(p.red, t.hex(hl('String').fg), 'String')
+  t.eq(p.comment, t.hex(hl('Comment').fg), 'Comment')
+  t.eq(p.terminal[2], vim.g.terminal_color_1, 'terminal_color_1')
+  config.extend()
+end)
+
+t.test('contrast = increased works with a forced light flavor', function()
+  require('apple').setup { flavor = 'light', contrast = 'increased' }
+  vim.o.background = 'light'
+  vim.cmd.colorscheme 'apple'
+  t.eq(palette.light_contrast.bg, t.hex(hl('Normal').bg))
+  config.extend()
+end)
+
+-- Review focus 1: a wrong value means default colors, not an error.
+t.test('an unknown contrast value loads the default colors', function()
+  vim.o.background = 'dark'
+  for _, value in ipairs { 'high', '', true, 1 } do
+    require('apple').setup { contrast = value }
+    local ok, err = pcall(vim.cmd.colorscheme, 'apple')
+    t.ok(ok, tostring(err))
+    t.eq(palette.dark.bg, t.hex(hl('Normal').bg), 'contrast = ' .. vim.inspect(value))
+  end
+  config.extend()
+end)
+
+-- Review focus 2: the option can change at runtime, in both directions.
+t.test('changing contrast and reloading switches the palette both ways', function()
+  config.extend()
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg), 'default first')
+  require('apple').setup { contrast = 'increased' }
+  vim.cmd.colorscheme 'apple'
+  t.eq(palette.dark_contrast.bg, t.hex(hl('Normal').bg), 'then increased')
+  require('apple').setup {}
+  vim.cmd.colorscheme 'apple'
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg), 'then default again')
+end)
+
+-- Review focus 3: auto mode keeps the contrast when the terminal switches.
+t.test('auto flavor keeps increased contrast when background changes', function()
+  require('apple').setup { contrast = 'increased' }
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  vim.o.background = 'light'
+  t.eq(palette.light_contrast.bg, t.hex(hl('Normal').bg), 'light')
+  vim.o.background = 'dark'
+  t.eq(palette.dark_contrast.bg, t.hex(hl('Normal').bg), 'dark')
+  config.extend()
+end)
+
+-- Review focus 4: plugins that load after :colorscheme get the same palette.
+t.test('integrations added after load use the increased contrast palette', function()
+  local apple = require 'apple'
+  apple.setup { contrast = 'increased', integrations = { telescope = false } }
+  vim.o.background = 'dark'
+  vim.cmd 'highlight clear'
+  vim.cmd.colorscheme 'apple'
+  apple.setup { contrast = 'increased', integrations = { telescope = true } }
+  t.eq(true, apple.apply_new_integrations())
+  t.eq(palette.dark_contrast.bg_alt, t.hex(hl('TelescopeNormal').bg))
+  config.extend()
+end)
+
+t.test('on_highlights gets the increased contrast palette', function()
+  local seen
+  require('apple').setup {
+    contrast = 'increased',
+    on_highlights = function(_, p) seen = p end,
+  }
+  vim.o.background = 'dark'
+  vim.cmd.colorscheme 'apple'
+  t.ok(seen == palette.dark_contrast, 'palette passed to on_highlights')
+  config.extend()
+  vim.cmd.colorscheme 'apple'
+end)
