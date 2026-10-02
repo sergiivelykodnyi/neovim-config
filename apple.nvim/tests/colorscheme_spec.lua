@@ -262,3 +262,13 @@ t.test('switching from a forced flavor to auto in the same tick does not change 
   t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
   config.extend()
 end)
+
+-- The contrast option was removed. An old config that still sets it must load.
+t.test('an unknown option such as contrast is ignored', function()
+  require('apple').setup { contrast = 'increased' }
+  vim.o.background = 'dark'
+  local ok, err = pcall(vim.cmd.colorscheme, 'apple')
+  t.ok(ok, tostring(err))
+  t.eq(palette.dark.bg, t.hex(hl('Normal').bg))
+  config.extend()
+end)

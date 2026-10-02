@@ -55,8 +55,11 @@ for _, mode in ipairs { 'dark', 'light' } do
     t.min_contrast(p.fg, p.bg_alt, 7.0, 'fg on bg_alt')
     t.min_contrast(p.comment, p.bg, 3.0, 'comment on bg')
     t.min_contrast(p.comment, p.bg_alt, 3.0, 'comment on bg_alt')
+    -- Syntax colors: 4.5 in dark. Light reaches 4.0 on this background;
+    -- 4.5 would need a white background.
+    local min = mode == 'dark' and 4.5 or 4.0
     for _, name in ipairs { 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'purple', 'pink' } do
-      t.min_contrast(p[name], p.bg, 3.0, name .. ' on bg')
+      t.min_contrast(p[name], p.bg, min, name .. ' on bg')
     end
     t.min_contrast(p.search_fg, p.search, 4.5, 'search')
     t.min_contrast(p.search_fg, p.cur_search, 4.5, 'cur_search')

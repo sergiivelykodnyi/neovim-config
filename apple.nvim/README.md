@@ -110,6 +110,10 @@ Treesitter and the built-in LSP client are always styled.
 | purple     | `#EA8DFF` | `#B02FC2` |
 | pink       | `#FF8AC4` | `#E7124D` |
 
+Text colors are Apple's increased contrast colors; backgrounds and grays are
+Apple's default ones. The tests keep every syntax color at a contrast of at
+least 4.5 against the background in dark and 4.0 in light.
+
 ## Development
 
 Run the tests (no dependencies):
