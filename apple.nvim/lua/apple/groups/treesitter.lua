@@ -1,5 +1,7 @@
 -- Highlight groups for treesitter captures (see :help treesitter-highlight-groups).
 -- Most captures follow the Xcode-style colors from syntax.lua.
+-- Members, parameters and delimiters get their own colors, so every part
+-- of `vim.keymap.set` is easy to see.
 local M = {}
 
 local function style(base, extra) return vim.tbl_extend('force', base, extra or {}) end
@@ -15,9 +17,9 @@ function M.get(p, opts)
     -- Identifiers
     ['@variable'] = { fg = p.fg },
     ['@variable.builtin'] = { fg = p.purple },
-    ['@variable.parameter'] = { fg = p.fg },
+    ['@variable.parameter'] = { fg = p.brown },
     ['@variable.parameter.builtin'] = { fg = p.purple },
-    ['@variable.member'] = { fg = p.fg },
+    ['@variable.member'] = { fg = p.mint },
     ['@constant'] = { fg = p.yellow },
     ['@constant.builtin'] = { fg = p.yellow },
     ['@constant.macro'] = { fg = p.orange },
@@ -46,7 +48,7 @@ function M.get(p, opts)
     ['@type.definition'] = { fg = p.teal },
     ['@attribute'] = { fg = p.orange },
     ['@attribute.builtin'] = { fg = p.orange },
-    ['@property'] = { fg = p.fg },
+    ['@property'] = { fg = p.mint },
 
     -- Functions
     ['@function'] = func,
@@ -76,7 +78,7 @@ function M.get(p, opts)
     ['@keyword.directive.define'] = style({ fg = p.orange }, s.keywords),
 
     -- Punctuation
-    ['@punctuation.delimiter'] = { fg = p.fg },
+    ['@punctuation.delimiter'] = { fg = p.cyan },
     ['@punctuation.bracket'] = { fg = p.fg },
     ['@punctuation.special'] = { fg = p.purple },
 

@@ -32,6 +32,8 @@ function M.get(p, _)
     ['@lsp.mod.deprecated'] = { strikethrough = true },
     ['@lsp.typemod.variable.readonly'] = { link = '@constant' },
     ['@lsp.typemod.variable.defaultLibrary'] = { link = '@variable.builtin' },
+    -- Global variables, for example `vim` in Lua (lua_ls marks it as global)
+    ['@lsp.typemod.variable.global'] = { link = '@variable.builtin' },
     ['@lsp.typemod.function.defaultLibrary'] = { link = '@function.builtin' },
 
     -- References and hints

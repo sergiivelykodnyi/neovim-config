@@ -36,10 +36,13 @@ M.dark = derive {
   orange = '#FFA056',
   yellow = '#FEDF43',
   green = '#4AD968',
+  mint = '#54DFCB',
   teal = '#3BDDEC',
+  cyan = '#6DD9FF',
   blue = '#5CB8FF',
   purple = '#EA8DFF',
   pink = '#FF8AC4',
+  brown = '#DBA679',
 
   -- Search backgrounds (Apple yellow and orange)
   search = '#FFD600',
@@ -91,10 +94,13 @@ M.light = derive {
   orange = '#C55300',
   yellow = '#A16A00',
   green = '#008932',
+  mint = '#008575',
   teal = '#008198',
+  cyan = '#007EAE',
   blue = '#1E6EF4',
   purple = '#B02FC2',
   pink = '#E7124D',
+  brown = '#956D51',
 
   -- Search backgrounds (Apple yellow and orange)
   search = '#FFCC00',

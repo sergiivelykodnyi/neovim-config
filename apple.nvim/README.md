@@ -7,6 +7,8 @@ with your terminal and macOS appearance.
 
 Syntax colors follow Xcode: pink keywords, red strings, yellow numbers, blue
 functions, teal types, orange preprocessor.
+Members and properties are mint, function parameters are brown, and delimiters
+(dots and commas) are cyan.
 
 ## Requirements
 
@@ -105,10 +107,13 @@ Treesitter and the built-in LSP client are always styled.
 | orange     | `#FFA056` | `#C55300` |
 | yellow     | `#FEDF43` | `#A16A00` |
 | green      | `#4AD968` | `#008932` |
+| mint       | `#54DFCB` | `#008575` |
 | teal       | `#3BDDEC` | `#008198` |
+| cyan       | `#6DD9FF` | `#007EAE` |
 | blue       | `#5CB8FF` | `#1E6EF4` |
 | purple     | `#EA8DFF` | `#B02FC2` |
 | pink       | `#FF8AC4` | `#E7124D` |
+| brown      | `#DBA679` | `#956D51` |
 
 Text colors are Apple's increased contrast colors; backgrounds and grays are
 Apple's default ones. The tests keep every syntax color at a contrast of at
