@@ -32,7 +32,7 @@ for _, mode in ipairs { 'dark', 'light' } do
   end)
 
   t.test(mode .. ': text colors are HIG increased contrast colors', function()
-    for _, name in ipairs { 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'purple', 'pink' } do
+    for _, name in ipairs { 'red', 'orange', 'yellow', 'green', 'mint', 'teal', 'cyan', 'blue', 'purple', 'pink', 'brown' } do
       t.eq(hig[name][hc], p[name], name)
     end
   end)
@@ -58,7 +58,7 @@ for _, mode in ipairs { 'dark', 'light' } do
     -- Syntax colors: 4.5 in dark. Light reaches 4.0 on this background;
     -- 4.5 would need a white background.
     local min = mode == 'dark' and 4.5 or 4.0
-    for _, name in ipairs { 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'purple', 'pink' } do
+    for _, name in ipairs { 'red', 'orange', 'yellow', 'green', 'mint', 'teal', 'cyan', 'blue', 'purple', 'pink', 'brown' } do
       t.min_contrast(p[name], p.bg, min, name .. ' on bg')
     end
     t.min_contrast(p.search_fg, p.search, 4.5, 'search')
