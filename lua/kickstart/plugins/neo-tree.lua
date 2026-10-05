@@ -11,6 +11,14 @@ vim.keymap.set('n', '\\', '<Cmd>Neotree reveal<CR>', { desc = 'NeoTree reveal', 
 
 require('neo-tree').setup {
   filesystem = {
+    filtered_items = {
+      -- Show dotfiles and git-ignored files, but dimmed. `H` hides them
+      visible = true,
+      hide_dotfiles = true,
+      hide_gitignored = true,
+      -- The .git folder is the only item that never shows
+      never_show = { '.git' },
+    },
     window = {
       mappings = {
         ['\\'] = 'close_window',
