@@ -767,6 +767,24 @@ do
 
     stylua = {}, -- Used to format Lua code
 
+    -- Web languages: JavaScript, TypeScript, HTML, CSS, JSON
+    ts_ls = {},
+    html = {},
+    jsonls = {},
+    tailwindcss = {}, -- Starts only in projects that use Tailwind CSS
+    eslint = {}, -- Starts only in projects with an ESLint config
+    cssls = {
+      settings = {
+        -- Tailwind adds rules like `@apply`, so do not warn about unknown at-rules
+        css = { lint = { unknownAtRules = 'ignore' } },
+        scss = { lint = { unknownAtRules = 'ignore' } },
+        less = { lint = { unknownAtRules = 'ignore' } },
+      },
+    },
+    stylelint_lsp = {
+      filetypes = { 'css', 'scss', 'less' }, -- Starts only in projects with a Stylelint config
+    },
+
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
       on_init = function(client)
@@ -826,6 +844,11 @@ do
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
     'markdownlint', -- Used to lint Markdown files
+    'prettierd', -- Used to format web files (HTML, CSS, JS, TS, JSON)
+    'eslint_d', -- Used to apply ESLint fixes
+    'stylelint', -- Used to apply Stylelint fixes
+    -- Mason has two packages for `stylelint_lsp`. nvim-lspconfig needs this one.
+    'stylelint-language-server',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
