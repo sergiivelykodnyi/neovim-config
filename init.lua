@@ -866,6 +866,56 @@ end
 do
   -- [[ Formatting ]]
   vim.pack.add { gh 'stevearc/conform.nvim' }
+
+  -- Find the project root for a lint tool: the nearest folder with one of its
+  -- config files, or with a package.json that has the tool's config key.
+  -- Without a root the lint step is skipped (see `require_cwd` below).
+  ---@param files string[]
+  ---@param package_key string
+  local function lint_root(files, package_key)
+    return function(_, ctx)
+      return vim.fs.root(ctx.dirname, function(name, path)
+        if vim.tbl_contains(files, name) then return true end
+        if name ~= 'package.json' then return false end
+        local file = io.open(vim.fs.joinpath(path, name), 'r')
+        if not file then return false end
+        local ok, data = pcall(vim.json.decode, file:read '*a')
+        file:close()
+        return ok and type(data) == 'table' and data[package_key] ~= nil
+      end)
+    end
+  end
+
+  local eslint_configs = {
+    'eslint.config.js',
+    'eslint.config.mjs',
+    'eslint.config.cjs',
+    'eslint.config.ts',
+    'eslint.config.mts',
+    'eslint.config.cts',
+    '.eslintrc',
+    '.eslintrc.js',
+    '.eslintrc.cjs',
+    '.eslintrc.json',
+    '.eslintrc.yaml',
+    '.eslintrc.yml',
+  }
+  local stylelint_configs = {
+    'stylelint.config.js',
+    'stylelint.config.mjs',
+    'stylelint.config.cjs',
+    '.stylelintrc',
+    '.stylelintrc.js',
+    '.stylelintrc.mjs',
+    '.stylelintrc.cjs',
+    '.stylelintrc.json',
+    '.stylelintrc.yaml',
+    '.stylelintrc.yml',
+  }
+
+  -- Lint fixes run first, then Prettier formats the result
+  local script_chain = { 'eslint_d', 'prettierd' }
+  local style_chain = { 'stylelint', 'prettierd' }
   require('conform').setup {
     notify_on_error = false,
     format_on_save = function(bufnr)
@@ -891,6 +941,21 @@ do
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      javascript = script_chain,
+      javascriptreact = script_chain,
+      typescript = script_chain,
+      typescriptreact = script_chain,
+      css = style_chain,
+      scss = style_chain,
+      less = style_chain,
+      html = { 'prettierd' },
+      json = { 'prettierd' },
+      jsonc = { 'prettierd' },
+    },
+    formatters = {
+      -- Run the lint fixers only in projects that have a config for them
+      eslint_d = { cwd = lint_root(eslint_configs, 'eslintConfig'), require_cwd = true },
+      stylelint = { cwd = lint_root(stylelint_configs, 'stylelint'), require_cwd = true },
     },
   }
 
