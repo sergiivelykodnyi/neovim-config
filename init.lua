@@ -188,7 +188,7 @@ do
   -- Diagnostic Config & Keymaps
   --  See `:help vim.diagnostic.Opts`
   vim.diagnostic.config {
-    update_in_insert = false,
+    update_in_insert = true, -- Show problems while typing, not only after leaving Insert mode
     severity_sort = true,
     float = { border = 'rounded', source = 'if_many' },
     underline = { severity = { min = vim.diagnostic.severity.WARN } },
@@ -767,6 +767,39 @@ do
 
     stylua = {}, -- Used to format Lua code
 
+    -- Web languages: JavaScript, TypeScript, HTML, CSS, JSON
+    ts_ls = {},
+    html = {},
+    jsonls = {},
+    tailwindcss = {
+      -- Start only in Tailwind projects: a Tailwind config file, or a package.json
+      -- that mentions `tailwindcss`. The default also starts in every git repository.
+      root_dir = function(bufnr, on_dir)
+        local root = vim.fs.root(bufnr, function(name, path)
+          if name:match '^tailwind%.config%.[cm]?[jt]s$' then return true end
+          if name ~= 'package.json' then return false end
+          local file = io.open(vim.fs.joinpath(path, name), 'r')
+          if not file then return false end
+          local text = file:read '*a'
+          file:close()
+          return text:find('tailwindcss', 1, true) ~= nil
+        end)
+        if root then on_dir(root) end
+      end,
+    },
+    eslint = {}, -- Starts only in projects with an ESLint config
+    cssls = {
+      settings = {
+        -- Tailwind adds rules like `@apply`, so do not warn about unknown at-rules
+        css = { lint = { unknownAtRules = 'ignore' } },
+        scss = { lint = { unknownAtRules = 'ignore' } },
+        less = { lint = { unknownAtRules = 'ignore' } },
+      },
+    },
+    stylelint_lsp = {
+      filetypes = { 'css', 'scss', 'less' }, -- Starts only in projects with a Stylelint config
+    },
+
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
       on_init = function(client)
@@ -825,6 +858,12 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
+    'markdownlint', -- Used to lint Markdown files
+    'prettierd', -- Used to format web files (HTML, CSS, JS, TS, JSON)
+    'eslint_d', -- Used to apply ESLint fixes
+    'stylelint', -- Used to apply Stylelint fixes
+    -- Mason has two packages for `stylelint_lsp`. nvim-lspconfig needs this one.
+    'stylelint-language-server',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -842,6 +881,56 @@ end
 do
   -- [[ Formatting ]]
   vim.pack.add { gh 'stevearc/conform.nvim' }
+
+  -- Find the project root for a lint tool: the nearest folder with one of its
+  -- config files, or with a package.json that has the tool's config key.
+  -- Without a root the lint step is skipped (see `require_cwd` below).
+  ---@param files string[]
+  ---@param package_key string
+  local function lint_root(files, package_key)
+    return function(_, ctx)
+      return vim.fs.root(ctx.dirname, function(name, path)
+        if vim.tbl_contains(files, name) then return true end
+        if name ~= 'package.json' then return false end
+        local file = io.open(vim.fs.joinpath(path, name), 'r')
+        if not file then return false end
+        local ok, data = pcall(vim.json.decode, file:read '*a')
+        file:close()
+        return ok and type(data) == 'table' and data[package_key] ~= nil
+      end)
+    end
+  end
+
+  local eslint_configs = {
+    'eslint.config.js',
+    'eslint.config.mjs',
+    'eslint.config.cjs',
+    'eslint.config.ts',
+    'eslint.config.mts',
+    'eslint.config.cts',
+    '.eslintrc',
+    '.eslintrc.js',
+    '.eslintrc.cjs',
+    '.eslintrc.json',
+    '.eslintrc.yaml',
+    '.eslintrc.yml',
+  }
+  local stylelint_configs = {
+    'stylelint.config.js',
+    'stylelint.config.mjs',
+    'stylelint.config.cjs',
+    '.stylelintrc',
+    '.stylelintrc.js',
+    '.stylelintrc.mjs',
+    '.stylelintrc.cjs',
+    '.stylelintrc.json',
+    '.stylelintrc.yaml',
+    '.stylelintrc.yml',
+  }
+
+  -- Lint fixes run first, then Prettier formats the result
+  local script_chain = { 'eslint_d', 'prettierd' }
+  local style_chain = { 'stylelint', 'prettierd' }
   require('conform').setup {
     notify_on_error = false,
     format_on_save = function(bufnr)
@@ -867,10 +956,36 @@ do
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      javascript = script_chain,
+      javascriptreact = script_chain,
+      typescript = script_chain,
+      typescriptreact = script_chain,
+      css = style_chain,
+      scss = style_chain,
+      less = style_chain,
+      html = { 'prettierd' },
+      json = { 'prettierd' },
+      jsonc = { 'prettierd' },
+    },
+    formatters = {
+      -- Run the lint fixers only in projects that have a config for them
+      eslint_d = { cwd = lint_root(eslint_configs, 'eslintConfig'), require_cwd = true },
+      stylelint = { cwd = lint_root(stylelint_configs, 'stylelint'), require_cwd = true },
     },
   }
 
-  vim.keymap.set({ 'n', 'v' }, '<leader>f', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
+  -- The lint fixers always change the whole file, so a visual selection is formatted without them
+  local whole_file_only = { eslint_d = true, stylelint = true }
+
+  vim.keymap.set({ 'n', 'v' }, '<leader>f', function()
+    local conform = require 'conform'
+    local opts = { async = true }
+    if vim.fn.mode() ~= 'n' then
+      local names = vim.tbl_filter(function(name) return not whole_file_only[name] end, conform.list_formatters_for_buffer())
+      if #names > 0 then opts.formatters = names end
+    end
+    conform.format(opts)
+  end, { desc = '[F]ormat buffer' })
 end
 
 -- ============================================================
@@ -970,6 +1085,8 @@ do
 
   -- Ensure basic parsers are installed
   local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  -- Parsers for web languages
+  vim.list_extend(parsers, { 'css', 'scss', 'javascript', 'typescript', 'tsx', 'jsdoc', 'json' })
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -1036,9 +1153,9 @@ do
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug'
-  -- require 'kickstart.plugins.indent_line'
-  -- require 'kickstart.plugins.lint'
-  -- require 'kickstart.plugins.autopairs'
+  require 'kickstart.plugins.indent_line'
+  require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.autopairs'
   -- require 'kickstart.plugins.neo-tree'
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
