@@ -10,6 +10,23 @@ A starting point for Neovim that is:
 
 **NOT** a Neovim distribution, but instead a starting point for your configuration.
 
+## Web Languages
+
+This config supports HTML, CSS (also SCSS and Less), JavaScript, TypeScript,
+JSX, TSX and JSON. It needs [Node.js](https://nodejs.org), because Mason
+installs the tools with `npm`.
+
+* Language servers: `ts_ls`, `html`, `cssls`, `jsonls`, `tailwindcss`,
+  `eslint`, `stylelint_lsp`. They show problems inline while you type.
+* `<leader>f` applies lint fixes first (`eslint_d` or `stylelint`) and then
+  formats with `prettierd`. Nothing is formatted on save.
+* ESLint, Stylelint and Tailwind tools start only in projects that have a
+  config for them.
+
+Run the local checks with:
+
+    nvim --headless -c "luafile tests/web/run.lua"
+
 ## Installation
 
 ### Install Neovim
