@@ -994,6 +994,8 @@ do
 
   -- Ensure basic parsers are installed
   local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  -- Parsers for web languages
+  vim.list_extend(parsers, { 'css', 'scss', 'javascript', 'typescript', 'tsx', 'jsdoc', 'json' })
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
