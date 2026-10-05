@@ -28,6 +28,7 @@ queries. Other languages get highlighting the first time you open such a
 file, when a Treesitter parser exists for them.
 
 The completion keys are listed in [docs/completion-keys.md](docs/completion-keys.md).
+The file tree keys are listed in [docs/neo-tree-keys.md](docs/neo-tree-keys.md).
 
 ## Web Languages
 
