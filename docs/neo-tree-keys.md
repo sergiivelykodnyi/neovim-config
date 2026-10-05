@@ -2,7 +2,8 @@
 
 The file tree comes from
 [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim). It shows all
-files, also dotfiles and git-ignored files. Only the `.git` folder is hidden.
+files. Dotfiles and git-ignored files are dimmed, and `H` hides them. The
+`.git` folder is always hidden.
 
 The keys below work in Normal mode. All of them except the first one work
 only inside the tree window.
@@ -28,6 +29,7 @@ only inside the tree window.
 | `/`         | Fuzzy search for a file or folder                |
 | `Ctrl-x`    | Clear the search filter                          |
 | `[g` / `]g` | Jump to the previous / next file changed in git  |
+| `H`         | Hide or show dotfiles and git-ignored files      |
 | `R`         | Refresh the tree                                 |
 
 ## Open files
@@ -59,7 +61,6 @@ only inside the tree window.
 
 - `a` in a folder creates the new file inside this folder. You can type a
   path like `a/b/c.lua`, the missing folders are created too.
-- `H` normally shows or hides hidden files. In this config nothing is hidden
-  except `.git`, and `H` does not show it.
+- `H` never shows the `.git` folder.
 - To change the tree, edit `lua/kickstart/plugins/neo-tree.lua`. See
   `:help neo-tree-mappings` for all commands.
