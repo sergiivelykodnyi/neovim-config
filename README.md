@@ -10,6 +10,25 @@ A starting point for Neovim that is:
 
 **NOT** a Neovim distribution, but instead a starting point for your configuration.
 
+## Supported Languages
+
+| Language         | Completion and problems   | `<leader>f`                |
+| ---------------- | ------------------------- | -------------------------- |
+| JavaScript, JSX  | `ts_ls`, `eslint`         | ESLint fixes, then Prettier |
+| TypeScript, TSX  | `ts_ls`, `eslint`         | ESLint fixes, then Prettier |
+| CSS, SCSS, Less  | `cssls`, `stylelint_lsp`  | Stylelint fixes, then Prettier |
+| HTML             | `html`                    | Prettier                   |
+| JSON, JSONC      | `jsonls`                  | Prettier                   |
+| Tailwind classes | `tailwindcss`             | -                          |
+| Lua              | `lua_ls`                  | stylua                     |
+| Markdown         | `markdownlint` (problems only) | -                     |
+
+Syntax highlighting only: Bash, C, diff, Vim script, Vim help, Treesitter
+queries. Other languages get highlighting the first time you open such a
+file, when a Treesitter parser exists for them.
+
+The completion keys are listed in [docs/completion-keys.md](docs/completion-keys.md).
+
 ## Web Languages
 
 This config supports HTML, CSS (also SCSS and Less), JavaScript, TypeScript,
