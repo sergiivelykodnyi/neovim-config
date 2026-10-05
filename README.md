@@ -20,6 +20,8 @@ installs the tools with `npm`.
   `eslint`, `stylelint_lsp`. They show problems inline while you type.
 * `<leader>f` applies lint fixes first (`eslint_d` or `stylelint`) and then
   formats with `prettierd`. Nothing is formatted on save.
+* On a visual selection `<leader>f` only formats. Lint fixes need the whole
+  file.
 * ESLint, Stylelint and Tailwind tools start only in projects that have a
   config for them.
 

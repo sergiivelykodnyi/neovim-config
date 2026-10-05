@@ -55,6 +55,15 @@ local ok, result = pcall(t.format, lint .. '/src/broken.js')
 t.check('syntax error raises no Lua error', ok, tostring(result))
 same('syntax error leaves the buffer unchanged', ok and result or '', 'const = ;\n')
 
+-- A visual selection is formatted without the lint fixers, because they
+-- always change the whole file. Lines outside the selection stay as they are.
+local range_buf = t.open(lint .. '/src/range.js')
+local before = t.text(range_buf)
+vim.api.nvim_feedkeys(vim.keycode '2GV<Space>f', 'mx', false)
+vim.wait(10000, function() return t.text(range_buf) ~= before end, 100)
+vim.api.nvim_feedkeys(vim.keycode '<Esc>', 'nx', false)
+same('selection: only the selected line changes', t.text(range_buf), 'let  a = 1\nlet b = 2;\nlet  c = 3\nconsole.log( a, b, c )\n')
+
 -- Saving a file does not format it.
 local buf = t.open(plain .. '/src/a.ts')
 vim.cmd 'silent write!'

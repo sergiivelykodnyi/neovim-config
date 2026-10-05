@@ -31,6 +31,8 @@ end
 
 -- Source files with lint problems and bad formatting.
 local sources = {
+  -- A fake `.git` folder: most projects are git repositories.
+  ['.git/HEAD'] = 'ref: refs/heads/main\n',
   ['package.json'] = '{}\n',
   ['package-lock.json'] = '{}\n',
   -- `unused` has a lint problem with no automatic fix.
@@ -45,6 +47,7 @@ local sources = {
   ['src/index.html'] = '<div>\n<p>hi</p>\n      </div>\n',
   ['src/data.json'] = '{"a":1}\n',
   ['src/broken.js'] = 'const = ;\n',
+  ['src/range.js'] = 'let  a = 1\nlet  b = 2\nlet  c = 3\nconsole.log( a, b, c )\n',
   ['tsconfig.json'] = '{\n  // keep me\n  "compilerOptions": {"strict":true}\n}\n',
 }
 

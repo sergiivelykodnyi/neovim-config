@@ -771,7 +771,22 @@ do
     ts_ls = {},
     html = {},
     jsonls = {},
-    tailwindcss = {}, -- Starts only in projects that use Tailwind CSS
+    tailwindcss = {
+      -- Start only in Tailwind projects: a Tailwind config file, or a package.json
+      -- that mentions `tailwindcss`. The default also starts in every git repository.
+      root_dir = function(bufnr, on_dir)
+        local root = vim.fs.root(bufnr, function(name, path)
+          if name:match '^tailwind%.config%.[cm]?[jt]s$' then return true end
+          if name ~= 'package.json' then return false end
+          local file = io.open(vim.fs.joinpath(path, name), 'r')
+          if not file then return false end
+          local text = file:read '*a'
+          file:close()
+          return text:find('tailwindcss', 1, true) ~= nil
+        end)
+        if root then on_dir(root) end
+      end,
+    },
     eslint = {}, -- Starts only in projects with an ESLint config
     cssls = {
       settings = {
@@ -959,7 +974,18 @@ do
     },
   }
 
-  vim.keymap.set({ 'n', 'v' }, '<leader>f', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
+  -- The lint fixers always change the whole file, so a visual selection is formatted without them
+  local whole_file_only = { eslint_d = true, stylelint = true }
+
+  vim.keymap.set({ 'n', 'v' }, '<leader>f', function()
+    local conform = require 'conform'
+    local opts = { async = true }
+    if vim.fn.mode() ~= 'n' then
+      local names = vim.tbl_filter(function(name) return not whole_file_only[name] end, conform.list_formatters_for_buffer())
+      if #names > 0 then opts.formatters = names end
+    end
+    conform.format(opts)
+  end, { desc = '[F]ormat buffer' })
 end
 
 -- ============================================================

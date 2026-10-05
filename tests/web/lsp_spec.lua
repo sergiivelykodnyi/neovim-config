@@ -47,3 +47,13 @@ local plain_css = t.open(plain .. '/src/a.css')
 t.check('cssls attaches without lint configs', t.attached(plain_css, 'cssls'))
 t.check('stylelint_lsp stays away without a config', not t.attached(plain_css, 'stylelint_lsp', 3000))
 t.check('tailwindcss stays away outside Tailwind projects', not t.attached(plain_css, 'tailwindcss', 3000))
+
+-- Tailwind projects: a Tailwind config file, or `tailwindcss` in package.json.
+local with_config = t.project { ['.git/HEAD'] = 'ref: refs/heads/main\n', ['tailwind.config.js'] = 'export default {};\n', ['src/a.css'] = 'a {}\n' }
+t.check('tailwindcss attaches with a Tailwind config file', t.attached(t.open(with_config .. '/src/a.css'), 'tailwindcss'))
+local with_package = t.project {
+  ['.git/HEAD'] = 'ref: refs/heads/main\n',
+  ['package.json'] = '{ "devDependencies": { "tailwindcss": "^4.0.0" } }\n',
+  ['src/a.css'] = 'a {}\n',
+}
+t.check('tailwindcss attaches with tailwindcss in package.json', t.attached(t.open(with_package .. '/src/a.css'), 'tailwindcss'))

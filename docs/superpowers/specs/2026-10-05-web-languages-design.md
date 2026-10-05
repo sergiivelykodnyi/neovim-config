@@ -77,8 +77,10 @@ Notes:
 - The `eslint` and `stylelint_lsp` configs from `nvim-lspconfig` start
   only when the buffer has an ESLint or Stylelint config file above it.
   So projects without a config get no noise.
-- `tailwindcss` starts only in projects that use Tailwind. This comes
-  from its `nvim-lspconfig` root detection.
+- `tailwindcss` starts only in projects that use Tailwind: a
+  `tailwind.config.*` file, or a `package.json` that mentions
+  `tailwindcss`. This needs our own `root_dir`, because the
+  `nvim-lspconfig` default also starts in every git repository.
 - No server needs its formatting turned off. Conform uses LSP formatting
   only as a fallback, and every web filetype gets an external formatter.
 
@@ -117,7 +119,10 @@ Reason: the Conform defaults look for `package.json`, so the lint step
 would run, and fail, in projects that have no lint config. With the
 overrides the step is skipped and Prettier still runs.
 
-The `<leader>f` mapping and the `format_on_save` function do not change.
+The `format_on_save` function does not change. The `<leader>f` mapping
+changes in one point: on a visual selection it skips the lint fixers and
+runs Prettier only, because `eslint_d` and `stylelint` always change the
+whole file.
 
 ### Treesitter (Section 9)
 
