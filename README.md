@@ -81,6 +81,17 @@ External Requirements:
   - If you want to write Golang, you will need `go`
   - etc.
 
+On macOS, the [Brewfile](Brewfile) lists Neovim and the external tools. Install
+them with [Homebrew](https://brew.sh) from the repository root:
+
+```sh
+brew bundle
+```
+
+The Xcode Command Line Tools supply `git`, `make`, `unzip` and the C compiler.
+The `Brewfile` does not install Node.js. Install it separately, for example
+with [fnm](https://github.com/Schniz/fnm).
+
 > [!NOTE]
 > See [Install Recipes](#Install-Recipes) for additional Windows and Linux specific notes
 > and quick install snippets
