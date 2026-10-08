@@ -30,7 +30,8 @@ function M.get(p, _)
     ['@lsp.type.typeParameter'] = { link = '@type' },
     ['@lsp.type.variable'] = { link = '@variable' },
     ['@lsp.mod.deprecated'] = { strikethrough = true },
-    ['@lsp.typemod.variable.readonly'] = { link = '@constant' },
+    -- `const` variables are normal variables; TypeScript marks every `const` as readonly.
+    ['@lsp.typemod.variable.readonly'] = { link = '@variable' },
     ['@lsp.typemod.variable.defaultLibrary'] = { link = '@variable.builtin' },
     -- Global variables, for example `vim` in Lua (lua_ls marks it as global)
     ['@lsp.typemod.variable.global'] = { link = '@variable.builtin' },

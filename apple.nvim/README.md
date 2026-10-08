@@ -5,9 +5,9 @@ A Neovim colorscheme built from Apple system colors
 Two flavors, dark and light. The flavor follows `'background'`, so it switches
 with your terminal and macOS appearance.
 
-Syntax colors follow Xcode: pink keywords, red strings, yellow numbers, blue
-functions, teal types, orange preprocessor.
-Members and properties are mint, function parameters are brown, and delimiters
+Syntax colors follow One Dark: purple keywords, red variables and properties,
+orange numbers and constants, green strings, yellow types, blue functions,
+pink special characters. Built-ins like `this` and `vim` are yellow. Delimiters
 (dots and commas) are cyan.
 
 ## Requirements

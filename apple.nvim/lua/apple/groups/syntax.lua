@@ -1,4 +1,6 @@
--- Highlight groups for Vim syntax (Xcode-style colors) and diagnostics.
+-- Highlight groups for Vim syntax and diagnostics.
+-- Colors follow One Dark, with Apple colors: red variables, orange constants,
+-- green strings, yellow types, blue functions, purple keywords, pink specials.
 local M = {}
 
 -- Merge a user style into a base definition. The user style wins.
@@ -11,39 +13,39 @@ function M.get(p, opts)
   return {
     -- Syntax
     Comment = style({ fg = p.comment }, s.comments),
-    Constant = { fg = p.yellow },
-    String = style({ fg = p.red }, s.strings),
-    Character = { fg = p.red },
-    Number = { fg = p.yellow },
-    Boolean = { fg = p.yellow },
-    Float = { fg = p.yellow },
-    Identifier = { fg = p.fg },
+    Constant = { fg = p.orange },
+    String = style({ fg = p.green }, s.strings),
+    Character = { fg = p.green },
+    Number = { fg = p.orange },
+    Boolean = { fg = p.orange },
+    Float = { fg = p.orange },
+    Identifier = { fg = p.red },
     Function = style({ fg = p.blue }, s.functions),
-    Statement = style({ fg = p.pink }, s.keywords),
+    Statement = style({ fg = p.purple }, s.keywords),
     Conditional = { link = 'Statement' },
     Repeat = { link = 'Statement' },
     Label = { link = 'Statement' },
     Operator = { fg = p.fg },
-    Keyword = style({ fg = p.pink }, s.keywords),
+    Keyword = style({ fg = p.purple }, s.keywords),
     Exception = { link = 'Statement' },
     PreProc = { fg = p.orange },
-    Include = { link = 'PreProc' },
+    Include = { link = 'Keyword' },
     Define = { link = 'PreProc' },
     Macro = { link = 'PreProc' },
     PreCondit = { link = 'PreProc' },
-    Type = { fg = p.teal },
+    Type = { fg = p.yellow },
     StorageClass = { link = 'Type' },
     Structure = { link = 'Type' },
     Typedef = { link = 'Type' },
-    Special = { fg = p.purple },
-    SpecialChar = { fg = p.purple },
+    Special = { fg = p.pink },
+    SpecialChar = { fg = p.pink },
     Tag = { fg = p.blue },
     Delimiter = { fg = p.fg },
     SpecialComment = { fg = p.comment, bold = true },
     Debug = { fg = p.orange },
     Ignore = { fg = p.comment },
     Error = { fg = p.red, bold = true },
-    Todo = { fg = p.purple, bold = true },
+    Todo = { fg = p.pink, bold = true },
 
     -- Diagnostics
     DiagnosticError = { fg = p.red },

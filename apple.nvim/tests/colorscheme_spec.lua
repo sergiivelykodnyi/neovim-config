@@ -35,15 +35,18 @@ for _, mode in ipairs { 'dark', 'light' } do
 
   t.test(mode .. ': syntax groups use Xcode-style colors', function()
     local expected = {
-      Statement = p.pink,
-      Keyword = p.pink,
-      String = p.red,
-      Number = p.yellow,
-      Constant = p.yellow,
+      Statement = p.purple,
+      Keyword = p.purple,
+      String = p.green,
+      Character = p.green,
+      Number = p.orange,
+      Boolean = p.orange,
+      Constant = p.orange,
+      Identifier = p.red,
       Function = p.blue,
-      Type = p.teal,
+      Type = p.yellow,
       PreProc = p.orange,
-      Special = p.purple,
+      Special = p.pink,
     }
     for group, color in pairs(expected) do
       t.eq(color, t.hex(hl(group).fg), group)
@@ -137,18 +140,25 @@ for _, mode in ipairs { 'dark', 'light' } do
     config.extend()
     vim.o.background = mode
     vim.cmd.colorscheme 'apple'
-    t.eq(p.fg, t.hex(hl('@variable').fg), '@variable')
-    t.eq(p.purple, t.hex(hl('@variable.builtin').fg), '@variable.builtin')
-    t.eq(p.pink, t.hex(hl('@keyword').fg), '@keyword')
+    t.eq(p.red, t.hex(hl('@variable').fg), '@variable')
+    t.eq(p.yellow, t.hex(hl('@variable.builtin').fg), '@variable.builtin')
+    t.eq(p.purple, t.hex(hl('@keyword').fg), '@keyword')
     t.eq(true, hl('@keyword').bold, '@keyword bold')
-    t.eq(p.pink, t.hex(hl('@keyword.return').fg), '@keyword.return')
+    t.eq(p.purple, t.hex(hl('@keyword.return').fg), '@keyword.return')
     t.eq(p.blue, t.hex(hl('@function').fg), '@function')
     t.eq(p.blue, t.hex(hl('@function.method').fg), '@function.method')
-    t.eq(p.teal, t.hex(hl('@type').fg), '@type')
-    t.eq(p.red, t.hex(hl('@string').fg), '@string')
-    t.eq(p.purple, t.hex(hl('@string.escape').fg), '@string.escape')
-    t.eq(p.yellow, t.hex(hl('@number').fg), '@number')
-    t.eq(p.orange, t.hex(hl('@keyword.import').fg), '@keyword.import')
+    t.eq(p.yellow, t.hex(hl('@type').fg), '@type')
+    t.eq(p.yellow, t.hex(hl('@type.definition').fg), '@type.definition')
+    t.eq(p.yellow, t.hex(hl('@constructor').fg), '@constructor')
+    t.eq(p.green, t.hex(hl('@string').fg), '@string')
+    t.eq(p.pink, t.hex(hl('@string.escape').fg), '@string.escape')
+    t.eq(p.orange, t.hex(hl('@number').fg), '@number')
+    t.eq(p.orange, t.hex(hl('@boolean').fg), '@boolean')
+    t.eq(p.orange, t.hex(hl('@constant').fg), '@constant')
+    t.eq(p.yellow, t.hex(hl('@lsp.type.interface').fg), '@lsp.type.interface')
+    t.eq(p.orange, t.hex(hl('@lsp.type.enumMember').fg), '@lsp.type.enumMember')
+    t.eq(p.purple, t.hex(hl('@keyword.import').fg), '@keyword.import')
+    t.eq(p.orange, t.hex(hl('@keyword.directive').fg), '@keyword.directive')
     t.eq(p.comment, t.hex(hl('@comment').fg), '@comment')
     t.eq(p.fg, t.hex(hl('@punctuation.bracket').fg), '@punctuation.bracket')
   end)
@@ -156,13 +166,13 @@ for _, mode in ipairs { 'dark', 'light' } do
   -- In `vim.keymap.set(a, { desc = b })` the dots, `keymap`, `desc` and a
   -- parameter each have their own color (not the plain text color).
   t.test(mode .. ': members, parameters and delimiters have their own colors', function()
-    t.eq(p.mint, t.hex(hl('@variable.member').fg), '@variable.member')
-    t.eq(p.mint, t.hex(hl('@property').fg), '@property')
-    t.eq(p.brown, t.hex(hl('@variable.parameter').fg), '@variable.parameter')
+    t.eq(p.red, t.hex(hl('@variable.member').fg), '@variable.member')
+    t.eq(p.red, t.hex(hl('@property').fg), '@property')
+    t.eq(p.red, t.hex(hl('@variable.parameter').fg), '@variable.parameter')
     t.eq(p.cyan, t.hex(hl('@punctuation.delimiter').fg), '@punctuation.delimiter')
     -- The LSP semantic tokens follow the same colors.
-    t.eq(p.mint, t.hex(hl('@lsp.type.property').fg), '@lsp.type.property')
-    t.eq(p.brown, t.hex(hl('@lsp.type.parameter').fg), '@lsp.type.parameter')
+    t.eq(p.red, t.hex(hl('@lsp.type.property').fg), '@lsp.type.property')
+    t.eq(p.red, t.hex(hl('@lsp.type.parameter').fg), '@lsp.type.parameter')
   end)
 
   t.test(mode .. ': markup captures for markdown and help', function()
@@ -176,11 +186,14 @@ for _, mode in ipairs { 'dark', 'light' } do
   end)
 
   t.test(mode .. ': LSP semantic tokens and references', function()
-    t.eq(p.teal, t.hex(hl('@lsp.type.class').fg), '@lsp.type.class')
-    t.eq(p.fg, t.hex(hl('@lsp.type.variable').fg), '@lsp.type.variable')
+    t.eq(p.yellow, t.hex(hl('@lsp.type.class').fg), '@lsp.type.class')
+    t.eq(p.red, t.hex(hl('@lsp.type.variable').fg), '@lsp.type.variable')
+    -- `const` variables are plain text, not constants (TypeScript marks every
+    -- `const` as readonly, which made half of a file red).
+    t.eq(p.red, t.hex(hl('@lsp.typemod.variable.readonly').fg), '@lsp.typemod.variable.readonly')
     t.eq(p.blue, t.hex(hl('@lsp.type.function').fg), '@lsp.type.function')
     -- lua_ls reports `vim` as a global variable, not as a built-in one.
-    t.eq(p.purple, t.hex(hl('@lsp.typemod.variable.global').fg), '@lsp.typemod.variable.global')
+    t.eq(p.yellow, t.hex(hl('@lsp.typemod.variable.global').fg), '@lsp.typemod.variable.global')
     t.eq(true, hl('@lsp.mod.deprecated').strikethrough, '@lsp.mod.deprecated')
     t.eq(p.bg_alt, t.hex(hl('LspReferenceText').bg), 'LspReferenceText')
     t.eq(p.comment, t.hex(hl('LspInlayHint').fg), 'LspInlayHint')

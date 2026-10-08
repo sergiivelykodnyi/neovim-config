@@ -90,6 +90,17 @@ t.test('blink, gitsigns, which_key, todo_comments are listed', function()
   end
 end)
 
+t.test('blink: completion kinds match the syntax colors', function()
+  local defs = require('apple.groups.blink').get(palette.dark, config.defaults)
+  t.eq(palette.dark.yellow, defs.BlinkCmpKindInterface.fg)
+  t.eq(palette.dark.yellow, defs.BlinkCmpKindClass.fg)
+  t.eq(palette.dark.orange, defs.BlinkCmpKindConstant.fg)
+  t.eq(palette.dark.orange, defs.BlinkCmpKindEnumMember.fg)
+  t.eq(palette.dark.red, defs.BlinkCmpKindVariable.fg)
+  t.eq(palette.dark.red, defs.BlinkCmpKindProperty.fg)
+  t.eq(palette.dark.purple, defs.BlinkCmpKindKeyword.fg)
+end)
+
 t.test('blink: menu uses bg_alt, selection uses the selection color', function()
   local defs = require('apple.groups.blink').get(palette.dark, config.defaults)
   t.eq(palette.dark.bg_alt, defs.BlinkCmpMenu.bg)

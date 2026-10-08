@@ -1,7 +1,7 @@
 -- Highlight groups for treesitter captures (see :help treesitter-highlight-groups).
--- Most captures follow the Xcode-style colors from syntax.lua.
--- Members, parameters and delimiters get their own colors, so every part
--- of `vim.keymap.set` is easy to see.
+-- Most captures follow the colors from syntax.lua (One Dark style).
+-- Every variable, parameter and property is red. Built-ins like `this`,
+-- `self` and `vim` are yellow. Delimiters are cyan.
 local M = {}
 
 local function style(base, extra) return vim.tbl_extend('force', base, extra or {}) end
@@ -10,45 +10,45 @@ local function style(base, extra) return vim.tbl_extend('force', base, extra or 
 ---@param opts table options
 function M.get(p, opts)
   local s = opts.styles or {}
-  local keyword = style({ fg = p.pink }, s.keywords)
+  local keyword = style({ fg = p.purple }, s.keywords)
   local func = style({ fg = p.blue }, s.functions)
 
   return {
     -- Identifiers
-    ['@variable'] = { fg = p.fg },
-    ['@variable.builtin'] = { fg = p.purple },
-    ['@variable.parameter'] = { fg = p.brown },
-    ['@variable.parameter.builtin'] = { fg = p.purple },
-    ['@variable.member'] = { fg = p.mint },
-    ['@constant'] = { fg = p.yellow },
-    ['@constant.builtin'] = { fg = p.yellow },
+    ['@variable'] = { fg = p.red },
+    ['@variable.builtin'] = { fg = p.yellow },
+    ['@variable.parameter'] = { fg = p.red },
+    ['@variable.parameter.builtin'] = { fg = p.yellow },
+    ['@variable.member'] = { fg = p.red },
+    ['@constant'] = { fg = p.orange },
+    ['@constant.builtin'] = { fg = p.orange },
     ['@constant.macro'] = { fg = p.orange },
     ['@module'] = { fg = p.teal },
-    ['@module.builtin'] = { fg = p.purple },
-    ['@label'] = { fg = p.pink },
+    ['@module.builtin'] = { fg = p.yellow },
+    ['@label'] = { fg = p.purple },
 
     -- Literals
-    ['@string'] = style({ fg = p.red }, s.strings),
+    ['@string'] = style({ fg = p.green }, s.strings),
     ['@string.documentation'] = { fg = p.comment },
     ['@string.regexp'] = { fg = p.orange },
-    ['@string.escape'] = { fg = p.purple },
-    ['@string.special'] = { fg = p.purple },
-    ['@string.special.symbol'] = { fg = p.yellow },
+    ['@string.escape'] = { fg = p.pink },
+    ['@string.special'] = { fg = p.pink },
+    ['@string.special.symbol'] = { fg = p.orange },
     ['@string.special.path'] = { fg = p.blue, underline = true },
     ['@string.special.url'] = { fg = p.blue, underline = true },
-    ['@character'] = { fg = p.red },
-    ['@character.special'] = { fg = p.purple },
-    ['@boolean'] = { fg = p.yellow },
-    ['@number'] = { fg = p.yellow },
-    ['@number.float'] = { fg = p.yellow },
+    ['@character'] = { fg = p.green },
+    ['@character.special'] = { fg = p.pink },
+    ['@boolean'] = { fg = p.orange },
+    ['@number'] = { fg = p.orange },
+    ['@number.float'] = { fg = p.orange },
 
     -- Types
-    ['@type'] = { fg = p.teal },
-    ['@type.builtin'] = { fg = p.teal },
-    ['@type.definition'] = { fg = p.teal },
+    ['@type'] = { fg = p.yellow },
+    ['@type.builtin'] = { fg = p.yellow },
+    ['@type.definition'] = { fg = p.yellow },
     ['@attribute'] = { fg = p.orange },
     ['@attribute.builtin'] = { fg = p.orange },
-    ['@property'] = { fg = p.mint },
+    ['@property'] = { fg = p.red },
 
     -- Functions
     ['@function'] = func,
@@ -57,7 +57,7 @@ function M.get(p, opts)
     ['@function.macro'] = style({ fg = p.orange }, s.functions),
     ['@function.method'] = func,
     ['@function.method.call'] = func,
-    ['@constructor'] = { fg = p.teal },
+    ['@constructor'] = { fg = p.yellow },
     ['@operator'] = { fg = p.fg },
 
     -- Keywords
@@ -65,7 +65,7 @@ function M.get(p, opts)
     ['@keyword.coroutine'] = keyword,
     ['@keyword.function'] = keyword,
     ['@keyword.operator'] = keyword,
-    ['@keyword.import'] = style({ fg = p.orange }, s.keywords),
+    ['@keyword.import'] = keyword,
     ['@keyword.type'] = keyword,
     ['@keyword.modifier'] = keyword,
     ['@keyword.repeat'] = keyword,
@@ -80,14 +80,14 @@ function M.get(p, opts)
     -- Punctuation
     ['@punctuation.delimiter'] = { fg = p.cyan },
     ['@punctuation.bracket'] = { fg = p.fg },
-    ['@punctuation.special'] = { fg = p.purple },
+    ['@punctuation.special'] = { fg = p.pink },
 
     -- Comments
     ['@comment'] = style({ fg = p.comment }, s.comments),
     ['@comment.documentation'] = style({ fg = p.comment }, s.comments),
     ['@comment.error'] = { fg = p.red, bold = true },
     ['@comment.warning'] = { fg = p.orange, bold = true },
-    ['@comment.todo'] = { fg = p.purple, bold = true },
+    ['@comment.todo'] = { fg = p.pink, bold = true },
     ['@comment.note'] = { fg = p.blue, bold = true },
 
     -- Markup (markdown, help, ...)
@@ -105,11 +105,11 @@ function M.get(p, opts)
     ['@markup.quote'] = { fg = p.comment },
     ['@markup.math'] = { fg = p.yellow },
     ['@markup.link'] = { fg = p.blue },
-    ['@markup.link.label'] = { fg = p.purple },
+    ['@markup.link.label'] = { fg = p.pink },
     ['@markup.link.url'] = { fg = p.blue, underline = true },
     ['@markup.raw'] = { fg = p.red },
     ['@markup.raw.block'] = { fg = p.fg },
-    ['@markup.list'] = { fg = p.purple },
+    ['@markup.list'] = { fg = p.pink },
     ['@markup.list.checked'] = { fg = p.green },
     ['@markup.list.unchecked'] = { fg = p.comment },
 
