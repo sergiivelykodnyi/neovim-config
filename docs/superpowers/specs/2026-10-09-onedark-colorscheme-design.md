@@ -296,14 +296,41 @@ parser.
 | DiagnosticUnderline* | undercurl, `sp` = the same color | |
 | DiagnosticVirtualText* | the same colors, no background | |
 
-### Open items for the screenshot check
+### Grammar check results
 
-Two things could not be derived from the JSON with certainty:
+The VSCode TextMate grammars (built-in Lua, TypeScript, Markdown, CSS, HTML)
+settled these points without screenshots:
 
-- The color of `=` and other operators in Lua. The mapping says cyan.
-- Whether parameters in TypeScript are red or plain fg. The mapping says red.
+| thing | VSCode scope | color |
+|---|---|---|
+| Lua operators `= + == ..` | keyword.operator.lua, no theme rule | fg (`@operator.lua`) |
+| Lua `and`, `or`, `not` | keyword.operator.logical.lua | cyan (`@keyword.operator.lua`) |
+| Lua `M`, other ALL_CAPS names | variable.other.lua | red (`@constant.lua`) |
+| JS/TS ALL_CAPS names | variable.other.constant | yellow (`@constant.typescript`, ...) |
+| JS/TS `constructor` keyword | storage.type.ts | purple (`@constructor.typescript`, ...) |
+| JS/TS regex flags | keyword.other.ts | purple (`@character.special.typescript`, ...) |
+| Markdown `>` quote marker | punctuation.definition.quote under markup.quote | dim |
+| Markdown code fences and language name | punctuation.definition.markdown, fenced_code.block.language | fg |
+| Markdown `[ ]( )` around links | punctuation.definition.string / metadata | red |
+| Markdown emphasis marks `** * \`` | punctuation.definition.bold / italic / raw | the color of the text inside (no `@conceal` group) |
+| HTML `=` in attributes | punctuation.separator.key-value | fg |
+| HTML `<title>` and `<a>` text | plain text | fg |
+| HTML `<!DOCTYPE html>` | entity.name.tag | red |
+| CSS `url()`, `calc()`, `var()` | support.function | cyan |
+| CSS units `px`, `%` | keyword.other.unit | red |
+| CSS hex colors | constant.other.color | orange |
+| CSS value keywords `flex`, `red` | support.constant.property-value | orange |
+| CSS `.class` selector | entity.other.attribute-name.class | orange (`@type.css`) |
+| CSS `#id` selector | entity.other.attribute-name.id | blue (`@constant.css`) |
 
-The screenshot comparison settles both.
+The base CSS query marks units, hex colors and value keywords as `@string`,
+so `after/queries/css/highlights.scm` (with `;; extends`) adds the captures
+`@type.unit`, `@constant.color` and `@constant.value`. This file lives at the
+config root because tree-sitter loads queries from the runtimepath.
+
+Still open for the screenshot check: the effect of LSP semantic tokens in
+VSCode for Lua (`vim`, `string`, operators under lua-language-server) and
+TypeScript (enum members, `const` names, `readFile` import).
 
 ## Editor groups
 

@@ -121,24 +121,34 @@ function M.get(p)
     ['@tag.attribute'] = { fg = p.orange },
     ['@tag.delimiter'] = { fg = p.fg },
 
-    -- CSS
+    -- CSS. The base query marks units, hex colors and value keywords as @string;
+    -- after/queries/css/highlights.scm adds the captures used below.
     ['@property.css'] = { fg = p.fg }, -- support.type.property-name
     ['@property.scss'] = { fg = p.fg },
     ['@tag.css'] = { fg = p.red }, -- entity.name.tag selector
     ['@tag.scss'] = { fg = p.red },
-    ['@property.class.css'] = { fg = p.orange }, -- .class selector
-    ['@property.id.css'] = { fg = p.blue }, -- #id selector
+    ['@type.css'] = { fg = p.orange }, -- .class selector: entity.other.attribute-name.class
+    ['@type.scss'] = { fg = p.orange },
+    ['@constant.css'] = { fg = p.blue }, -- #id selector: entity.other.attribute-name.id
+    ['@constant.scss'] = { fg = p.blue },
     ['@attribute.css'] = { fg = p.cyan }, -- :hover, ::before
     ['@attribute.scss'] = { fg = p.cyan },
-    ['@constant.css'] = { fg = p.orange }, -- property value keywords: flex, red
-    ['@string.special.css'] = { fg = p.orange }, -- #fff
+    ['@function.css'] = { fg = p.cyan }, -- url(), calc(), var(): support.function
+    ['@function.scss'] = { fg = p.cyan },
+    ['@keyword.operator.css'] = { fg = p.cyan }, -- and, or, not in @media: keyword.operator.logical
     ['@keyword.import.css'] = { fg = p.purple },
     ['@number.css'] = { fg = p.orange },
-    ['@type.css'] = { fg = p.red }, -- units: px, %
+    ['@type.unit.css'] = { fg = p.red }, -- px, %, em: keyword.other.unit
+    ['@constant.color.css'] = { fg = p.orange }, -- #fff: constant.other.color
+    ['@constant.value.css'] = { fg = p.orange }, -- flex, red, none: support.constant.property-value
 
     -- HTML
     ['@character.special.html'] = { fg = p.red }, -- &amp;
     ['@string.special.url.html'] = { fg = p.green },
+    ['@constant.html'] = { fg = p.red }, -- <!DOCTYPE html>: entity.name.tag
+    ['@operator.html'] = { fg = p.fg }, -- = in attributes: punctuation.separator.key-value
+    ['@markup.heading.html'] = { fg = p.fg }, -- <title> text is plain in VSCode
+    ['@markup.link.label.html'] = { fg = p.fg }, -- <a> text is plain in VSCode
 
     -- JSON
     ['@property.json'] = { fg = p.red },
@@ -148,12 +158,32 @@ function M.get(p)
     ['@boolean.jsonc'] = { fg = p.cyan },
     ['@constant.builtin.jsonc'] = { fg = p.cyan },
 
-    -- Markdown punctuation: #, -, `, *
-    ['@punctuation.special.markdown'] = { fg = p.red },
+    -- Markdown. Emphasis marks (@conceal) have no group, so they take the color of their text,
+    -- like punctuation.definition.bold / .italic in VSCode.
+    ['@punctuation.special.markdown'] = { fg = p.dim }, -- > quote marker: inherits markup.quote
     ['@markup.list.markdown'] = { fg = p.yellow },
-    ['@punctuation.delimiter.markdown_inline'] = { fg = p.yellow },
-    ['@label.markdown'] = { fg = p.yellow }, -- code fence language name
-    ['@conceal.markdown_inline'] = { fg = p.yellow },
+    ['@markup.link.markdown_inline'] = { fg = p.red }, -- [ ]( ) around links: punctuation.definition.string
+    ['@markup.raw.block.markdown'] = { fg = p.fg }, -- fences and language name have no color in VSCode
+    ['@label.markdown'] = { fg = p.fg },
+
+    -- JavaScript and TypeScript (also JSX and TSX)
+    ['@constant.javascript'] = { fg = p.yellow }, -- SCREAMING_CASE: variable.other.constant
+    ['@constant.typescript'] = { fg = p.yellow },
+    ['@constant.jsx'] = { fg = p.yellow },
+    ['@constant.tsx'] = { fg = p.yellow },
+    ['@constructor.javascript'] = { fg = p.purple }, -- the constructor keyword: storage.type
+    ['@constructor.typescript'] = { fg = p.purple },
+    ['@constructor.jsx'] = { fg = p.purple },
+    ['@constructor.tsx'] = { fg = p.purple },
+    ['@character.special.javascript'] = { fg = p.purple }, -- regex flags: keyword.other
+    ['@character.special.typescript'] = { fg = p.purple },
+    ['@character.special.jsx'] = { fg = p.purple },
+    ['@character.special.tsx'] = { fg = p.purple },
+
+    -- Lua: the VSCode grammar gives operators no color and and/or/not the logical color
+    ['@operator.lua'] = { fg = p.fg }, -- keyword.operator.lua
+    ['@keyword.operator.lua'] = { fg = p.cyan }, -- keyword.operator.logical.lua
+    ['@constant.lua'] = { fg = p.red }, -- SCREAMING_CASE is a plain variable in VSCode
   }
 end
 
