@@ -264,8 +264,10 @@ The implementation checks the real capture names with `:Inspect` in Neovim.
 
 | token | color | reason |
 | --- | --- | --- |
-| `@lsp.type.variable`, `.property`, `.parameter` | red | same as tree-sitter |
-| `@lsp.typemod.variable.readonly` (`const x`) | yellow | VSCode maps `variable.readonly` to variable.other.constant, which is yellow in this theme |
+| `@lsp.type.property`, `.parameter` | red | same as tree-sitter |
+| `@lsp.type.variable`, `@lsp.typemod.variable.readonly` | empty, tree-sitter decides | VSCode shows module-level `const LIMIT` yellow and local consts red; see the screenshot results |
+| `@lsp.type.member` (`Math.max`, `console.log`) | blue | screenshot result |
+| `@lsp.typemod.variable.global` (Lua `vim`, `self`) | yellow | screenshot result |
 | `@lsp.typemod.variable.defaultLibrary` (`console`, `Math`, `window`, `vim`) | yellow | semanticTokenColors `variable.defaultLibrary` |
 | `@lsp.type.function`, `.method` | blue | entity.name.function |
 | `@lsp.typemod.function.defaultLibrary` (`require`, `setTimeout`) | cyan | support.function |
@@ -461,9 +463,17 @@ opens each in VSCode with One Dark Pro Night Flat. The same file is opened in
 Neovim. Screenshots are compared. Differences become fixes in the mapping. This
 step settles the open items above.
 
+### colors/onedark.lua
+
+A two-line `colors/onedark.lua` at the config root calls `load()`. It is
+needed, not optional: when `'background'` changes (terminal detection, tmux,
+`:set bg=light`), Neovim re-runs `colors/<colors_name>`. Without the file the
+theme silently disappears while `colors_name` still says `onedark`. The file
+also makes `:colorscheme onedark` the way to apply the theme again at runtime;
+a second `require` does nothing because Lua caches modules.
+
 ## Out of scope
 
 - A light flavor.
 - Options or a `setup()` function.
-- A `colors/` entry for `:colorscheme onedark`.
 - Publishing the theme as a separate plugin.

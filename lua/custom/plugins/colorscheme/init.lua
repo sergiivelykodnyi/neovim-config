@@ -1,5 +1,7 @@
 -- One Dark Pro Night Flat colorscheme for Neovim.
 -- Requiring this module applies the theme. There are no options.
+-- To apply it again later, run `:colorscheme onedark` (colors/onedark.lua calls load()).
+-- A second require() does nothing, because Lua caches the module.
 -- Colors: palette.lua. Highlight groups: groups/*.lua.
 local M = {}
 

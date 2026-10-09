@@ -36,8 +36,52 @@ t.test('requiring the module twice works and keeps one autocmd group', function(
   t.unload 'custom.plugins.colorscheme'
   require 'custom.plugins.colorscheme'
   t.eq('onedark', vim.g.colors_name, 'colors_name')
-  local count = startup_autocmds()
-  t.ok(count <= 1, 'at most one VimEnter autocmd, got ' .. count)
+  -- Under -l, VimEnter has already fired, so the loader must not add an autocmd.
+  -- Before VimEnter (a real startup) it adds exactly one. Both loads agree.
+  t.eq(vim.v.vim_did_enter == 1 and 0 or 1, startup_autocmds(), 'startup autocmds')
+end)
+
+t.test('a plugin added after the theme during startup gets its groups at VimEnter', function()
+  -- A real startup in a child Neovim: the theme loads first, then a fake
+  -- telescope appears on the runtimepath, as kickstart's init.lua does.
+  local script = debug.getinfo(1, 'S').source:sub(2)
+  local root = vim.fn.fnamemodify(script, ':p:h:h:h:h:h:h')
+  local dir = vim.fn.tempname()
+  vim.fn.mkdir(dir .. '/plugin/lua/telescope', 'p')
+  vim.fn.writefile({ 'return {}' }, dir .. '/plugin/lua/telescope/init.lua')
+  local init = dir .. '/init.lua'
+  vim.fn.writefile({
+    ('vim.opt.runtimepath:prepend(%q)'):format(root),
+    "require 'custom.plugins.colorscheme'",
+    ('vim.opt.runtimepath:append(%q)'):format(dir .. '/plugin'),
+    'vim.schedule(function()',
+    "  local hl = vim.api.nvim_get_hl(0, { name = 'TelescopeSelection' })",
+    "  local ok, list = pcall(vim.api.nvim_get_autocmds, { group = 'onedark-startup' })",
+    "  io.stdout:write(('%s %d\\n'):format(hl.bg and ('#%06x'):format(hl.bg) or 'nil', ok and #list or -1))",
+    "  vim.cmd 'qa!'",
+    'end)',
+  }, init)
+  local result = vim.system({ 'nvim', '--clean', '--headless', '-u', init }, { text = true }):wait()
+  vim.fn.delete(dir, 'rf')
+  t.eq(0, result.code, 'child exit code: ' .. (result.stderr or ''))
+  t.eq(palette.bg_select .. ' 0', vim.trim(result.stdout), 'TelescopeSelection bg and no autocmd left after VimEnter')
+end)
+
+t.test(':colorscheme onedark applies the theme again', function()
+  fresh()
+  vim.cmd 'highlight clear'
+  vim.cmd.colorscheme 'onedark'
+  t.eq('onedark', vim.g.colors_name, 'colors_name')
+  t.eq(palette.bg, t.hex(vim.api.nvim_get_hl(0, { name = 'Normal' }).bg), 'Normal bg')
+end)
+
+t.test("a 'background' change keeps the theme", function()
+  fresh()
+  -- Neovim re-runs colors/<colors_name> when 'background' changes.
+  vim.o.background = 'light'
+  t.eq(palette.bg, t.hex(vim.api.nvim_get_hl(0, { name = 'Normal' }).bg), 'Normal bg after background=light')
+  t.eq(palette.purple, t.hex(vim.api.nvim_get_hl(0, { name = '@keyword' }).fg), '@keyword fg after background=light')
+  vim.o.background = 'dark'
 end)
 
 t.test('a plugin added later gets its groups from apply_new_integrations', function()

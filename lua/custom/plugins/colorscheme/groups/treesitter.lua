@@ -141,6 +141,9 @@ function M.get(p)
     ['@type.unit.css'] = { fg = p.red }, -- px, %, em: keyword.other.unit
     ['@constant.color.css'] = { fg = p.orange }, -- #fff: constant.other.color
     ['@constant.value.css'] = { fg = p.orange }, -- flex, red, none: support.constant.property-value
+    ['@type.unit.scss'] = { fg = p.red }, -- scss inherits the css query extension
+    ['@constant.color.scss'] = { fg = p.orange },
+    ['@constant.value.scss'] = { fg = p.orange },
 
     -- HTML
     ['@character.special.html'] = { fg = p.red }, -- &amp;
