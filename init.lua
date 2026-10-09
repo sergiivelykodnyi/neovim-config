@@ -418,23 +418,8 @@ do
   }
 
   -- [[ Colorscheme ]]
-  -- The "apple" colorscheme is a plugin folder inside this config: apple.nvim/.
-  -- It uses Apple system colors. Add the folder to the runtimepath so
-  -- `:colorscheme apple` and `require('apple')` work. When the theme moves to
-  -- its own repository, replace the next line with `vim.pack.add { gh '<user>/apple.nvim' }`.
-  vim.opt.runtimepath:prepend(vim.fn.stdpath 'config' .. '/apple.nvim')
-  require('apple').setup {
-    -- 'auto' follows 'background': dark terminal -> dark flavor, light -> light.
-    flavor = 'auto',
-    styles = {
-      comments = {}, -- no italics in comments
-    },
-    -- Integrations (telescope, blink, gitsigns, mini, ...) are detected automatically.
-  }
-
-  -- Load the colorscheme here.
-  -- Neovim reads the terminal background at startup, so the right flavor is picked.
-  vim.cmd.colorscheme 'apple'
+  -- One Dark Pro Night Flat, built from the VSCode theme. See lua/custom/plugins/colorscheme/.
+  -- The module does not exist yet; the next commits add it.
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
