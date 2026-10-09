@@ -1,6 +1,7 @@
 -- Highlight groups for Vim syntax and diagnostics.
 -- Colors follow One Dark, with Apple colors: red variables, orange constants,
--- green strings, yellow types, blue functions, purple keywords, pink specials.
+-- green strings, yellow types, blue functions, purple keywords, pink specials,
+-- cyan operators and escape sequences.
 local M = {}
 
 -- Merge a user style into a base definition. The user style wins.
@@ -25,7 +26,7 @@ function M.get(p, opts)
     Conditional = { link = 'Statement' },
     Repeat = { link = 'Statement' },
     Label = { link = 'Statement' },
-    Operator = { fg = p.fg },
+    Operator = { fg = p.cyan },
     Keyword = style({ fg = p.purple }, s.keywords),
     Exception = { link = 'Statement' },
     PreProc = { fg = p.orange },
@@ -38,8 +39,8 @@ function M.get(p, opts)
     Structure = { link = 'Type' },
     Typedef = { link = 'Type' },
     Special = { fg = p.pink },
-    SpecialChar = { fg = p.pink },
-    Tag = { fg = p.blue },
+    SpecialChar = { fg = p.cyan },
+    Tag = { fg = p.red },
     Delimiter = { fg = p.fg },
     SpecialComment = { fg = p.comment, bold = true },
     Debug = { fg = p.orange },

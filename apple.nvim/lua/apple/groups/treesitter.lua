@@ -1,7 +1,9 @@
 -- Highlight groups for treesitter captures (see :help treesitter-highlight-groups).
 -- Most captures follow the colors from syntax.lua (One Dark style).
--- Every variable, parameter and property is red. Built-ins like `this`,
--- `self` and `vim` are yellow. Delimiters are cyan.
+-- Every variable, parameter and property is red; `const` variables turn orange
+-- through the LSP rule in lsp.lua. Built-ins like `this`, `self` and `vim` are
+-- yellow. Operators and escape sequences are cyan, delimiters plain text.
+-- HTML tags red, JSX component tags yellow, attributes orange.
 local M = {}
 
 local function style(base, extra) return vim.tbl_extend('force', base, extra or {}) end
@@ -23,7 +25,7 @@ function M.get(p, opts)
     ['@constant'] = { fg = p.orange },
     ['@constant.builtin'] = { fg = p.orange },
     ['@constant.macro'] = { fg = p.orange },
-    ['@module'] = { fg = p.teal },
+    ['@module'] = { fg = p.yellow },
     ['@module.builtin'] = { fg = p.yellow },
     ['@label'] = { fg = p.purple },
 
@@ -31,7 +33,7 @@ function M.get(p, opts)
     ['@string'] = style({ fg = p.green }, s.strings),
     ['@string.documentation'] = { fg = p.comment },
     ['@string.regexp'] = { fg = p.orange },
-    ['@string.escape'] = { fg = p.pink },
+    ['@string.escape'] = { fg = p.cyan },
     ['@string.special'] = { fg = p.pink },
     ['@string.special.symbol'] = { fg = p.orange },
     ['@string.special.path'] = { fg = p.blue, underline = true },
@@ -46,8 +48,8 @@ function M.get(p, opts)
     ['@type'] = { fg = p.yellow },
     ['@type.builtin'] = { fg = p.yellow },
     ['@type.definition'] = { fg = p.yellow },
-    ['@attribute'] = { fg = p.orange },
-    ['@attribute.builtin'] = { fg = p.orange },
+    ['@attribute'] = { fg = p.yellow },
+    ['@attribute.builtin'] = { fg = p.yellow },
     ['@property'] = { fg = p.red },
 
     -- Functions
@@ -58,7 +60,7 @@ function M.get(p, opts)
     ['@function.method'] = func,
     ['@function.method.call'] = func,
     ['@constructor'] = { fg = p.yellow },
-    ['@operator'] = { fg = p.fg },
+    ['@operator'] = { fg = p.cyan },
 
     -- Keywords
     ['@keyword'] = keyword,
@@ -73,12 +75,13 @@ function M.get(p, opts)
     ['@keyword.debug'] = keyword,
     ['@keyword.exception'] = keyword,
     ['@keyword.conditional'] = keyword,
-    ['@keyword.conditional.ternary'] = { fg = p.fg },
+    -- `?` and `:` of a ternary are operators.
+    ['@keyword.conditional.ternary'] = { fg = p.cyan },
     ['@keyword.directive'] = style({ fg = p.orange }, s.keywords),
     ['@keyword.directive.define'] = style({ fg = p.orange }, s.keywords),
 
     -- Punctuation
-    ['@punctuation.delimiter'] = { fg = p.cyan },
+    ['@punctuation.delimiter'] = { fg = p.fg },
     ['@punctuation.bracket'] = { fg = p.fg },
     ['@punctuation.special'] = { fg = p.pink },
 
@@ -117,9 +120,15 @@ function M.get(p, opts)
     ['@diff.plus'] = { fg = p.green },
     ['@diff.minus'] = { fg = p.red },
     ['@diff.delta'] = { fg = p.blue },
-    ['@tag'] = { fg = p.blue },
-    ['@tag.builtin'] = { fg = p.blue },
-    ['@tag.attribute'] = { fg = p.teal },
+    -- The html_tags query (HTML, Vue, Svelte, Astro) and the CSS query send
+    -- every tag to `@tag`. Only the jsx query separates `@tag` (component)
+    -- from `@tag.builtin` (lowercase HTML tag), so components are yellow
+    -- only in JavaScript and TSX.
+    ['@tag'] = { fg = p.red },
+    ['@tag.builtin'] = { fg = p.red },
+    ['@tag.javascript'] = { fg = p.yellow },
+    ['@tag.tsx'] = { fg = p.yellow },
+    ['@tag.attribute'] = { fg = p.orange },
     ['@tag.delimiter'] = { fg = p.fg },
   }
 end

@@ -5,12 +5,15 @@ local M = {}
 ---@param _ table options (unused here)
 function M.get(p, _)
   return {
-    -- Semantic tokens link to the treesitter captures with the same meaning.
+    -- Semantic tokens link to the treesitter captures with the same meaning,
+    -- except where a comment says otherwise.
     ['@lsp.type.class'] = { link = '@type' },
     ['@lsp.type.comment'] = { link = '@comment' },
     ['@lsp.type.decorator'] = { link = '@attribute' },
     ['@lsp.type.enum'] = { link = '@type' },
-    ['@lsp.type.enumMember'] = { link = '@constant' },
+    -- Cyan, like blink. Treesitter has no enum member capture, so variants
+    -- are orange (`@constant`) until the LSP attaches.
+    ['@lsp.type.enumMember'] = { fg = p.cyan },
     ['@lsp.type.event'] = { link = '@type' },
     ['@lsp.type.function'] = { link = '@function' },
     ['@lsp.type.interface'] = { link = '@type' },
@@ -30,8 +33,9 @@ function M.get(p, _)
     ['@lsp.type.typeParameter'] = { link = '@type' },
     ['@lsp.type.variable'] = { link = '@variable' },
     ['@lsp.mod.deprecated'] = { strikethrough = true },
-    -- `const` variables are normal variables; TypeScript marks every `const` as readonly.
-    ['@lsp.typemod.variable.readonly'] = { link = '@variable' },
+    -- Readonly variables are constants (orange). TypeScript marks every `const`
+    -- as readonly, so most locals in a TypeScript file are orange.
+    ['@lsp.typemod.variable.readonly'] = { link = '@constant' },
     ['@lsp.typemod.variable.defaultLibrary'] = { link = '@variable.builtin' },
     -- Global variables, for example `vim` in Lua (lua_ls marks it as global)
     ['@lsp.typemod.variable.global'] = { link = '@variable.builtin' },

@@ -37,7 +37,7 @@ function M.get(p, _)
     BlinkCmpKindVariable = { fg = p.red },
     BlinkCmpKindClass = { fg = p.yellow },
     BlinkCmpKindInterface = { fg = p.yellow },
-    BlinkCmpKindModule = { fg = p.teal },
+    BlinkCmpKindModule = { fg = p.yellow },
     BlinkCmpKindProperty = { fg = p.red },
     BlinkCmpKindUnit = { fg = p.orange },
     BlinkCmpKindValue = { fg = p.orange },
@@ -48,11 +48,11 @@ function M.get(p, _)
     BlinkCmpKindFile = { fg = p.blue },
     BlinkCmpKindReference = { fg = p.pink },
     BlinkCmpKindFolder = { fg = p.blue },
-    BlinkCmpKindEnumMember = { fg = p.orange },
+    BlinkCmpKindEnumMember = { fg = p.cyan },
     BlinkCmpKindConstant = { fg = p.orange },
     BlinkCmpKindStruct = { fg = p.yellow },
     BlinkCmpKindEvent = { fg = p.pink },
-    BlinkCmpKindOperator = { fg = p.fg },
+    BlinkCmpKindOperator = { fg = p.cyan },
     BlinkCmpKindTypeParameter = { fg = p.yellow },
   }
 end

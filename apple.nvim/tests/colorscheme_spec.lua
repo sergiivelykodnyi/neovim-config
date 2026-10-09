@@ -47,6 +47,7 @@ for _, mode in ipairs { 'dark', 'light' } do
       Type = p.yellow,
       PreProc = p.orange,
       Special = p.pink,
+      SpecialChar = p.cyan,
     }
     for group, color in pairs(expected) do
       t.eq(color, t.hex(hl(group).fg), group)
@@ -136,7 +137,7 @@ end)
 for _, mode in ipairs { 'dark', 'light' } do
   local p = palette[mode]
 
-  t.test(mode .. ': treesitter captures follow the Xcode colors', function()
+  t.test(mode .. ': treesitter captures follow the One Dark colors', function()
     config.extend()
     vim.o.background = mode
     vim.cmd.colorscheme 'apple'
@@ -151,28 +152,44 @@ for _, mode in ipairs { 'dark', 'light' } do
     t.eq(p.yellow, t.hex(hl('@type.definition').fg), '@type.definition')
     t.eq(p.yellow, t.hex(hl('@constructor').fg), '@constructor')
     t.eq(p.green, t.hex(hl('@string').fg), '@string')
-    t.eq(p.pink, t.hex(hl('@string.escape').fg), '@string.escape')
+    t.eq(p.cyan, t.hex(hl('@string.escape').fg), '@string.escape')
     t.eq(p.orange, t.hex(hl('@number').fg), '@number')
     t.eq(p.orange, t.hex(hl('@boolean').fg), '@boolean')
     t.eq(p.orange, t.hex(hl('@constant').fg), '@constant')
     t.eq(p.yellow, t.hex(hl('@lsp.type.interface').fg), '@lsp.type.interface')
-    t.eq(p.orange, t.hex(hl('@lsp.type.enumMember').fg), '@lsp.type.enumMember')
+    t.eq(p.yellow, t.hex(hl('@module').fg), '@module')
+    t.eq(p.yellow, t.hex(hl('@attribute').fg), '@attribute')
+    t.eq(p.cyan, t.hex(hl('@operator').fg), '@operator')
+    t.eq(p.cyan, t.hex(hl('@keyword.conditional.ternary').fg), '@keyword.conditional.ternary')
     t.eq(p.purple, t.hex(hl('@keyword.import').fg), '@keyword.import')
     t.eq(p.orange, t.hex(hl('@keyword.directive').fg), '@keyword.directive')
     t.eq(p.comment, t.hex(hl('@comment').fg), '@comment')
     t.eq(p.fg, t.hex(hl('@punctuation.bracket').fg), '@punctuation.bracket')
   end)
 
-  -- In `vim.keymap.set(a, { desc = b })` the dots, `keymap`, `desc` and a
-  -- parameter each have their own color (not the plain text color).
-  t.test(mode .. ': members, parameters and delimiters have their own colors', function()
+  -- In `vim.keymap.set(a, { desc = b })` the dots are plain text; `keymap`,
+  -- `desc` and a parameter each have their own color.
+  t.test(mode .. ': members and parameters have their own colors, delimiters are plain', function()
     t.eq(p.red, t.hex(hl('@variable.member').fg), '@variable.member')
     t.eq(p.red, t.hex(hl('@property').fg), '@property')
     t.eq(p.red, t.hex(hl('@variable.parameter').fg), '@variable.parameter')
-    t.eq(p.cyan, t.hex(hl('@punctuation.delimiter').fg), '@punctuation.delimiter')
+    t.eq(p.fg, t.hex(hl('@punctuation.delimiter').fg), '@punctuation.delimiter')
     -- The LSP semantic tokens follow the same colors.
     t.eq(p.red, t.hex(hl('@lsp.type.property').fg), '@lsp.type.property')
     t.eq(p.red, t.hex(hl('@lsp.type.parameter').fg), '@lsp.type.parameter')
+  end)
+
+  -- In `<Nav to={x} />` and `<div class="a">` the tags and attributes follow One Dark.
+  -- Only the jsx query separates components (`@tag`) from HTML tags (`@tag.builtin`);
+  -- the html_tags query sends every tag to `@tag`, so `@tag` is red by default.
+  t.test(mode .. ': HTML tags red, JSX components yellow, attributes orange', function()
+    t.eq(p.red, t.hex(hl('@tag').fg), '@tag')
+    t.eq(p.red, t.hex(hl('@tag.builtin').fg), '@tag.builtin')
+    t.eq(p.yellow, t.hex(hl('@tag.javascript').fg), '@tag.javascript')
+    t.eq(p.yellow, t.hex(hl('@tag.tsx').fg), '@tag.tsx')
+    t.eq(p.red, t.hex(hl('Tag').fg), 'Tag')
+    t.eq(p.orange, t.hex(hl('@tag.attribute').fg), '@tag.attribute')
+    t.eq(p.fg, t.hex(hl('@tag.delimiter').fg), '@tag.delimiter')
   end)
 
   t.test(mode .. ': markup captures for markdown and help', function()
@@ -188,9 +205,10 @@ for _, mode in ipairs { 'dark', 'light' } do
   t.test(mode .. ': LSP semantic tokens and references', function()
     t.eq(p.yellow, t.hex(hl('@lsp.type.class').fg), '@lsp.type.class')
     t.eq(p.red, t.hex(hl('@lsp.type.variable').fg), '@lsp.type.variable')
-    -- `const` variables are plain text, not constants (TypeScript marks every
-    -- `const` as readonly, which made half of a file red).
-    t.eq(p.red, t.hex(hl('@lsp.typemod.variable.readonly').fg), '@lsp.typemod.variable.readonly')
+    -- `const` variables are constants (TypeScript marks every `const` as
+    -- readonly). `let` variables, parameters and properties stay red.
+    t.eq(p.orange, t.hex(hl('@lsp.typemod.variable.readonly').fg), '@lsp.typemod.variable.readonly')
+    t.eq(p.cyan, t.hex(hl('@lsp.type.enumMember').fg), '@lsp.type.enumMember')
     t.eq(p.blue, t.hex(hl('@lsp.type.function').fg), '@lsp.type.function')
     -- lua_ls reports `vim` as a global variable, not as a built-in one.
     t.eq(p.yellow, t.hex(hl('@lsp.typemod.variable.global').fg), '@lsp.typemod.variable.global')

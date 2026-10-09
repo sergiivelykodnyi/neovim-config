@@ -7,8 +7,10 @@ with your terminal and macOS appearance.
 
 Syntax colors follow One Dark: purple keywords, red variables and properties,
 orange numbers and constants, green strings, yellow types, blue functions,
-pink special characters. Built-ins like `this` and `vim` are yellow. Delimiters
-(dots and commas) are cyan.
+cyan operators (also `=` in Lua) and escape sequences, pink special characters.
+Built-ins like `this` and `vim` are yellow. `const` variables are orange like
+other constants when an LSP server marks them readonly. Enum members are cyan.
+HTML tags are red, JSX component tags yellow, attributes orange.
 
 ## Requirements
 
