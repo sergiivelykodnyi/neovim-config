@@ -419,7 +419,8 @@ do
 
   -- [[ Colorscheme ]]
   -- One Dark Pro Night Flat, built from the VSCode theme. See lua/custom/plugins/colorscheme/.
-  -- The module does not exist yet; the next commits add it.
+  -- Requiring the module applies the theme. Plugins loaded later in this file are picked up at VimEnter.
+  require 'custom.plugins.colorscheme'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
