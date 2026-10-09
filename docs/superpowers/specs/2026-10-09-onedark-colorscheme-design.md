@@ -25,7 +25,7 @@ Ghostty terminal already uses this palette (`ghostty/themes/one-dark` in the
 ## Decisions
 
 | Topic | Decision |
-|---|---|
+| --- | --- |
 | Source of truth | `themes/OneDark-Pro-night-flat.json` in the OneDark-Pro repo |
 | Syntax palette | The `classic` text colors (Night Flat uses `vivid: false`) |
 | UI palette | Night Flat workbench colors |
@@ -108,7 +108,7 @@ not protected: a broken core file must fail loudly.
 ### Syntax colors (`classic` text colors)
 
 | name | hex | used for |
-|---|---|---|
+| --- | --- | --- |
 | fg | `#abb2bf` | plain text, punctuation |
 | red | `#e06c75` | variables, properties, tags, markdown headings |
 | orange | `#d19a66` | numbers, constants, attributes |
@@ -124,7 +124,7 @@ not protected: a broken core file must fail loudly.
 ### UI colors (Night Flat workbench colors)
 
 | name | hex | VSCode key |
-|---|---|---|
+| --- | --- | --- |
 | bg | `#16191d` | editor.background |
 | bg_float | `#1e2227` | editorWidget.background, editorSuggestWidget.background, editorHoverWidget.background |
 | bg_input | `#1d1f23` | input.background |
@@ -157,7 +157,7 @@ Neovim has no transparency. Each value is blended onto `#16191d` with
 `result = alpha * color + (1 - alpha) * bg`, rounded per channel.
 
 | name | VSCode value | VSCode key | stored |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | selection | `#67769660` | editor.selectionBackground | `#343c4b` |
 | search | `#d19a6644` | editor.findMatchBackground | `#483b30` |
 | search_other | `#ffffff22` | editor.findMatchHighlightBackground | `#35383b` |
@@ -197,7 +197,7 @@ for TypeScript and Lua.
 ### Tree-sitter captures (all languages)
 
 | capture | color | VSCode scope |
-|---|---|---|
+| --- | --- | --- |
 | `@variable`, `@variable.member`, `@property` | red | variable, variable.other.property |
 | `@variable.parameter` | red | variable.parameter (semantic token "parameter" falls back to the `variable` rule) |
 | `@variable.builtin` (`this`, `self`, `vim`, `arguments`) | yellow | variable.language |
@@ -228,7 +228,7 @@ for TypeScript and Lua.
 ### Markdown
 
 | capture | color | VSCode scope |
-|---|---|---|
+| --- | --- | --- |
 | `@markup.heading` and its `#` marks | red | entity.name.section.markdown, punctuation.definition.heading.markdown |
 | `@markup.strong` | orange | markup.bold |
 | `@markup.italic` | purple | markup.italic |
@@ -241,7 +241,7 @@ for TypeScript and Lua.
 ### CSS, HTML, JSON
 
 | thing | color | VSCode scope |
-|---|---|---|
+| --- | --- | --- |
 | CSS property name (`color:`) | fg | support.type.property-name |
 | CSS property value keyword (`flex`, `red`) | orange | support.constant.property-value.css |
 | CSS tag selector (`div`) | red | entity.name.tag |
@@ -263,7 +263,7 @@ The implementation checks the real capture names with `:Inspect` in Neovim.
 ### LSP semantic tokens (TypeScript server and lua-language-server)
 
 | token | color | reason |
-|---|---|---|
+| --- | --- | --- |
 | `@lsp.type.variable`, `.property`, `.parameter` | red | same as tree-sitter |
 | `@lsp.typemod.variable.readonly` (`const x`) | yellow | VSCode maps `variable.readonly` to variable.other.constant, which is yellow in this theme |
 | `@lsp.typemod.variable.defaultLibrary` (`console`, `Math`, `window`, `vim`) | yellow | semanticTokenColors `variable.defaultLibrary` |
@@ -288,7 +288,7 @@ parser.
 ### Diagnostics
 
 | group | color | source |
-|---|---|---|
+| --- | --- | --- |
 | DiagnosticError | diag_error | editorError.foreground |
 | DiagnosticWarn | diag_warn | editorWarning.foreground |
 | DiagnosticInfo | diag_info | VSCode default |
@@ -302,7 +302,7 @@ The VSCode TextMate grammars (built-in Lua, TypeScript, Markdown, CSS, HTML)
 settled these points without screenshots:
 
 | thing | VSCode scope | color |
-|---|---|---|
+| --- | --- | --- |
 | Lua operators `= + == ..` | keyword.operator.lua, no theme rule | fg (`@operator.lua`) |
 | Lua `and`, `or`, `not` | keyword.operator.logical.lua | cyan (`@keyword.operator.lua`) |
 | Lua `M`, other ALL_CAPS names | variable.other.lua | red (`@constant.lua`) |
@@ -328,14 +328,35 @@ so `after/queries/css/highlights.scm` (with `;; extends`) adds the captures
 `@type.unit`, `@constant.color` and `@constant.value`. This file lives at the
 config root because tree-sitter loads queries from the runtimepath.
 
-Still open for the screenshot check: the effect of LSP semantic tokens in
-VSCode for Lua (`vim`, `string`, operators under lua-language-server) and
-TypeScript (enum members, `const` names, `readFile` import).
+### Screenshot check results
+
+Screenshots of VSCode (One Dark Pro Night Flat, language servers active) for
+the seven sample files settled the rest:
+
+| thing | VSCode | Neovim mapping |
+|---|---|---|
+| Brackets `( ) { } [ ] < >` | bracket pair colorization: orange, purple, cyan by nesting level | `@punctuation.bracket` orange (level 1). Nested levels need a plugin such as rainbow-delimiters.nvim; not included |
+| Lua table braces | orange brackets | `@constructor.lua` orange |
+| Regex literal with flags `/ab+c/gi` | all cyan | `@string.regexp` cyan, `@character.special` (flags) cyan for JS/TS, `after/queries/ecma/highlights.scm` colors the `/` delimiters too |
+| JS/TS `const` at module level (`LIMIT`) | yellow | tree-sitter `@constant` yellow; `@lsp.type.variable` and the `readonly` modifier are left empty so the LSP does not override it |
+| JS/TS local `const` (`re`, `box`) | red | tree-sitter `@variable` red |
+| `Math.max`, `console.log` methods | blue | `@lsp.type.member` blue |
+| `Math`, `console`, Lua `string` | yellow | `@lsp.typemod.variable.defaultLibrary` yellow |
+| Lua `vim`, `self` | yellow | `@lsp.typemod.variable.global` yellow (lua-language-server marks them `global`) |
+| Lua `pcall`, `print`, `require` | cyan | `@lsp.typemod.function.defaultLibrary` cyan |
+| Lua `---@param a number` | `@param` purple, `a number` comment gray | `@keyword.luadoc` purple, `@variable.parameter.luadoc` and `@type.luadoc` comment |
+| Markdown `[ ]( )` around links | plain fg | `@markup.link.markdown_inline` fg |
+| Markdown emphasis marks | same color as the text | no `@conceal` group |
+
+Known small differences that stay: nested bracket levels (purple, cyan) are
+flat orange; `<!DOCTYPE html>` is all red (VSCode: `DOCTYPE` red, `html`
+orange); `const x` inside an HTML `<script>` is red (VSCode: yellow, from the
+TextMate rule for `const` names without semantic tokens).
 
 ## Editor groups
 
 | group | value | VSCode source |
-|---|---|---|
+| --- | --- | --- |
 | Normal, NormalNC | fg on bg | editor.foreground / editor.background |
 | CursorLine, CursorColumn, QuickFixLine | bg_line | editor.lineHighlightBackground |
 | LineNr | line_nr | editorLineNumber.foreground |

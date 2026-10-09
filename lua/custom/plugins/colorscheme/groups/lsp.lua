@@ -18,32 +18,28 @@ function M.get(p)
     ['@lsp.type.keyword'] = { fg = p.purple },
     ['@lsp.type.macro'] = { fg = p.orange }, -- semanticTokenColors.macro
     ['@lsp.type.method'] = { fg = p.blue },
+    ['@lsp.type.member'] = { fg = p.blue }, -- ts_ls: Math.max, console.log
     ['@lsp.type.modifier'] = { fg = p.purple },
     ['@lsp.type.namespace'] = { fg = p.yellow },
     ['@lsp.type.number'] = { fg = p.orange },
     ['@lsp.type.operator'] = { fg = p.cyan },
     ['@lsp.type.parameter'] = { fg = p.red },
     ['@lsp.type.property'] = { fg = p.red },
-    ['@lsp.type.regexp'] = { fg = p.red },
+    ['@lsp.type.regexp'] = { fg = p.cyan },
     ['@lsp.type.string'] = { fg = p.green },
     ['@lsp.type.struct'] = { fg = p.yellow },
     ['@lsp.type.type'] = { fg = p.yellow },
     ['@lsp.type.typeParameter'] = { fg = p.yellow },
-    ['@lsp.type.variable'] = { fg = p.red },
+    -- Plain variables keep the tree-sitter color: VSCode shows SCREAMING_CASE consts yellow
+    -- and local consts red, which tree-sitter already distinguishes.
+    ['@lsp.type.variable'] = {},
 
     -- Modifiers. Neovim gives these a higher priority than the type groups.
-    ['@lsp.typemod.variable.readonly'] = { fg = p.yellow }, -- variable.readonly -> variable.other.constant
-    ['@lsp.typemod.variable.defaultLibrary'] = { fg = p.yellow }, -- semanticTokenColors variable.defaultLibrary
-    ['@lsp.typemod.variable.global'] = { fg = p.red },
-    ['@lsp.typemod.property.readonly'] = { fg = p.red },
-    ['@lsp.typemod.function.defaultLibrary'] = { fg = p.cyan }, -- support.function
-    ['@lsp.typemod.method.defaultLibrary'] = { fg = p.cyan },
+    ['@lsp.typemod.variable.defaultLibrary'] = { fg = p.yellow }, -- Math, console, string: semanticTokenColors variable.defaultLibrary
+    ['@lsp.typemod.variable.global'] = { fg = p.yellow }, -- lua-language-server marks vim and self as global; VSCode shows them yellow
+    ['@lsp.typemod.function.defaultLibrary'] = { fg = p.cyan }, -- pcall, print: support.function
     ['@lsp.typemod.class.defaultLibrary'] = { fg = p.yellow },
     ['@lsp.typemod.type.defaultLibrary'] = { fg = p.yellow },
-    ['@lsp.typemod.function.declaration'] = { fg = p.blue },
-    ['@lsp.typemod.method.declaration'] = { fg = p.blue },
-    ['@lsp.typemod.variable.declaration'] = { fg = p.red },
-    ['@lsp.typemod.parameter.declaration'] = { fg = p.red },
 
     -- Diagnostics
     DiagnosticError = { fg = p.diag_error },

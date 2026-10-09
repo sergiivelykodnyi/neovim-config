@@ -27,7 +27,7 @@ function M.get(p)
     ['@boolean'] = { fg = p.orange },
     ['@string'] = { fg = p.green },
     ['@string.documentation'] = { fg = p.comment },
-    ['@string.regexp'] = { fg = p.red }, -- string.regexp: the last rule in the theme wins
+    ['@string.regexp'] = { fg = p.cyan }, -- string.regexp: VSCode shows the first matching rule (cyan)
     ['@string.escape'] = { fg = p.cyan }, -- constant.character.escape
     ['@string.special'] = { fg = p.green },
     ['@string.special.symbol'] = { fg = p.cyan },
@@ -65,7 +65,7 @@ function M.get(p)
     -- Operators and punctuation
     ['@operator'] = { fg = p.cyan }, -- keyword.operator.arithmetic, .comparison, .logical, .assignment
     ['@punctuation.delimiter'] = { fg = p.fg },
-    ['@punctuation.bracket'] = { fg = p.fg },
+    ['@punctuation.bracket'] = { fg = p.orange }, -- editorBracketHighlight.foreground1 (bracket pair colorization, level 1)
     ['@punctuation.special'] = { fg = p.purple }, -- template expression ${ }
 
     -- Types
@@ -162,7 +162,7 @@ function M.get(p)
     -- like punctuation.definition.bold / .italic in VSCode.
     ['@punctuation.special.markdown'] = { fg = p.dim }, -- > quote marker: inherits markup.quote
     ['@markup.list.markdown'] = { fg = p.yellow },
-    ['@markup.link.markdown_inline'] = { fg = p.red }, -- [ ]( ) around links: punctuation.definition.string
+    ['@markup.link.markdown_inline'] = { fg = p.fg }, -- [ ]( ) around links have no color in VSCode
     ['@markup.raw.block.markdown'] = { fg = p.fg }, -- fences and language name have no color in VSCode
     ['@label.markdown'] = { fg = p.fg },
 
@@ -175,15 +175,19 @@ function M.get(p)
     ['@constructor.typescript'] = { fg = p.purple },
     ['@constructor.jsx'] = { fg = p.purple },
     ['@constructor.tsx'] = { fg = p.purple },
-    ['@character.special.javascript'] = { fg = p.purple }, -- regex flags: keyword.other
-    ['@character.special.typescript'] = { fg = p.purple },
-    ['@character.special.jsx'] = { fg = p.purple },
-    ['@character.special.tsx'] = { fg = p.purple },
+    ['@character.special.javascript'] = { fg = p.cyan }, -- regex flags: same color as the regex in VSCode
+    ['@character.special.typescript'] = { fg = p.cyan },
+    ['@character.special.jsx'] = { fg = p.cyan },
+    ['@character.special.tsx'] = { fg = p.cyan },
 
     -- Lua: the VSCode grammar gives operators no color and and/or/not the logical color
     ['@operator.lua'] = { fg = p.fg }, -- keyword.operator.lua
     ['@keyword.operator.lua'] = { fg = p.cyan }, -- keyword.operator.logical.lua
     ['@constant.lua'] = { fg = p.red }, -- SCREAMING_CASE is a plain variable in VSCode
+    ['@constructor.lua'] = { fg = p.orange }, -- table braces { } are brackets in VSCode
+    ['@variable.parameter.luadoc'] = { fg = p.comment }, -- names and types in ---@param keep the comment color
+    ['@type.luadoc'] = { fg = p.comment },
+    ['@type.builtin.luadoc'] = { fg = p.comment },
   }
 end
 
