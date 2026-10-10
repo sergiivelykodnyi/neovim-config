@@ -418,23 +418,9 @@ do
   }
 
   -- [[ Colorscheme ]]
-  -- The "apple" colorscheme is a plugin folder inside this config: apple.nvim/.
-  -- It uses Apple system colors. Add the folder to the runtimepath so
-  -- `:colorscheme apple` and `require('apple')` work. When the theme moves to
-  -- its own repository, replace the next line with `vim.pack.add { gh '<user>/apple.nvim' }`.
-  vim.opt.runtimepath:prepend(vim.fn.stdpath 'config' .. '/apple.nvim')
-  require('apple').setup {
-    -- 'auto' follows 'background': dark terminal -> dark flavor, light -> light.
-    flavor = 'auto',
-    styles = {
-      comments = {}, -- no italics in comments
-    },
-    -- Integrations (telescope, blink, gitsigns, mini, ...) are detected automatically.
-  }
-
-  -- Load the colorscheme here.
-  -- Neovim reads the terminal background at startup, so the right flavor is picked.
-  vim.cmd.colorscheme 'apple'
+  -- One Dark Pro Night Flat, built from the VSCode theme. See lua/custom/plugins/colorscheme/.
+  -- Requiring the module applies the theme. Plugins loaded later in this file are picked up at VimEnter.
+  require 'custom.plugins.colorscheme'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -685,6 +671,11 @@ do
   --    That is to say, every time a new file is opened that is associated with
   --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
   --    function will be executed to configure the current buffer
+  -- Document colors are on by default. Show a small colored square before a
+  -- color value (CSS, etc.), like the VSCode swatch, instead of a colored
+  -- background behind the text.
+  vim.lsp.document_color.enable(true, nil, { style = 'virtual' })
+
   vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
     callback = function(event)
@@ -1157,6 +1148,7 @@ do
   require 'kickstart.plugins.lint'
   require 'kickstart.plugins.autopairs'
   require 'kickstart.plugins.neo-tree'
+  require 'custom.plugins.rainbow_delimiters'
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --
