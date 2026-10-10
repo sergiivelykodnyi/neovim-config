@@ -5,7 +5,8 @@ local M = require 'custom.plugins.colorscheme'
 local function is_color(value) return value == 'NONE' or (type(value) == 'string' and value:match '^#%x%x%x%x%x%x$' ~= nil) end
 
 t.test('the integration list has every expected plugin', function()
-  local expected = { 'telescope', 'blink', 'gitsigns', 'which_key', 'todo_comments', 'mini', 'fidget', 'mason', 'indent_blankline', 'neo_tree', 'dap' }
+  local expected = { 'telescope', 'blink', 'gitsigns', 'which_key', 'todo_comments', 'mini', 'fidget', 'mason' }
+  vim.list_extend(expected, { 'indent_blankline', 'neo_tree', 'dap', 'rainbow_delimiters' })
   t.eq(expected, M.integrations, 'integrations')
 end)
 
@@ -25,6 +26,13 @@ for _, name in ipairs(M.integrations) do
   end)
 end
 
+t.test('rainbow_delimiters maps the three VSCode bracket levels', function()
+  local g = require('custom.plugins.colorscheme.groups.rainbow_delimiters').get(t.strict(palette))
+  t.eq({ fg = palette.orange }, g.RainbowDelimiterOrange, 'level 1')
+  t.eq({ fg = palette.purple }, g.RainbowDelimiterViolet, 'level 2')
+  t.eq({ fg = palette.cyan }, g.RainbowDelimiterCyan, 'level 3')
+end)
+
 t.test('integration detect names match the real plugin modules', function()
   local expected = {
     telescope = 'telescope',
@@ -38,6 +46,7 @@ t.test('integration detect names match the real plugin modules', function()
     indent_blankline = 'ibl',
     neo_tree = 'neo-tree',
     dap = { 'dap', 'dapui' },
+    rainbow_delimiters = 'rainbow-delimiters',
   }
   for name, detect in pairs(expected) do
     t.eq(detect, require('custom.plugins.colorscheme.groups.' .. name).detect, name .. '.detect')

@@ -12,7 +12,8 @@ local core = { 'editor', 'syntax', 'treesitter', 'lsp' }
 
 -- Applied when the plugin is found on the runtimepath.
 -- Each groups/<name>.lua exports `detect` (module names for util.has_plugin) and `get(p)`.
-M.integrations = { 'telescope', 'blink', 'gitsigns', 'which_key', 'todo_comments', 'mini', 'fidget', 'mason', 'indent_blankline', 'neo_tree', 'dap' }
+M.integrations = { 'telescope', 'blink', 'gitsigns', 'which_key', 'todo_comments', 'mini', 'fidget', 'mason' }
+vim.list_extend(M.integrations, { 'indent_blankline', 'neo_tree', 'dap', 'rainbow_delimiters' })
 
 -- Integrations applied since the last load(), and ones that failed (so the error is reported once).
 local done = {}

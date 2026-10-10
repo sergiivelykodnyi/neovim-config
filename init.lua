@@ -671,6 +671,11 @@ do
   --    That is to say, every time a new file is opened that is associated with
   --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
   --    function will be executed to configure the current buffer
+  -- Document colors are on by default. Show a small colored square before a
+  -- color value (CSS, etc.), like the VSCode swatch, instead of a colored
+  -- background behind the text.
+  vim.lsp.document_color.enable(true, nil, { style = 'virtual' })
+
   vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
     callback = function(event)
@@ -1143,6 +1148,7 @@ do
   require 'kickstart.plugins.lint'
   require 'kickstart.plugins.autopairs'
   require 'kickstart.plugins.neo-tree'
+  require 'custom.plugins.rainbow_delimiters'
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --

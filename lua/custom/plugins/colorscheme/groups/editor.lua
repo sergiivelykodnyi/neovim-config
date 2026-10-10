@@ -27,11 +27,12 @@ function M.get(p)
     LineNr = { fg = p.line_nr },
     LineNrAbove = { fg = p.line_nr },
     LineNrBelow = { fg = p.line_nr },
-    CursorLineNr = { fg = p.fg },
+    -- VSCode keeps the gutter of the current line on the editor background.
+    CursorLineNr = { fg = p.fg, bg = p.bg },
     SignColumn = { bg = p.bg },
-    CursorLineSign = { bg = p.bg_line },
+    CursorLineSign = { bg = p.bg },
     FoldColumn = { fg = p.line_nr, bg = p.bg },
-    CursorLineFold = { fg = p.line_nr, bg = p.bg_line },
+    CursorLineFold = { fg = p.line_nr, bg = p.bg },
     Folded = { fg = p.comment, bg = p.bg_float },
 
     -- Selection and search
